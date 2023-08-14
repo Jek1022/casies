@@ -30,6 +30,9 @@
     font-weight: bold;
 }
 
+.number-right{
+    text-align: right !important;
+}
 
 /* index list */
 .table {

@@ -23,15 +23,25 @@
                 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="col-md-4">
-
-                            <div class="form-group">
-                                <div class="input-group" id="date-range">
-                                    <input type="text" class="form-control" name="start" placeholder="From" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group" id="date-range">
+                                        <input type="text" class="form-control" name="start" placeholder="From" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="end" placeholder="To" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
                                     </div>
-                                    <input type="text" class="form-control" name="end" placeholder="To" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <select class="form-control" id="casType">
+                                        <option value="" disabled selected>Select CAS Type</option>
+                                        <option value="01">iES Advertisng</option>
+                                        <option value="02">Circulation System</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -64,70 +74,77 @@
                 <thead>
                     <tr>
                         <th><i class="fas fa-list-ol"></i></th>
-                        <th class="sortable-column" data-sort="date">Timestamp <i class="fas fa-arrow-down"></i></th>
-                        <th class="sortable-column" data-sort="user">User <i class="fas fa-arrow-down"></i></th>
-                        <th>Transaction Type</th>
+                        <th class="sortable-column" data-sort="date">Issue Date <i class="fas fa-arrow-down"></i></th>
+                        <th class="sortable-column" data-sort="user">Document Type <i class="fas fa-arrow-down"></i></th>
+                        <th class="sortable-column" data-sort="transaction-classification">Transaction Classification <i class="fas fa-arrow-down"></i></th>
                         <th class="sortable-column" data-sort="amount">Amount <i class="fas fa-arrow-down"></i></th>
                         <th>Status</th>
-                        <th>Notes</th>
+                        <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr data-id="1">
                         <td class="show-details">1</td>
                         <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="User123">User123</td>
-                        <td>Deposit</td>
-                        <td data-amount="100.00">₱100.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="SI">SI</td>
+                        <td data-transaction-classification="VATable">VATable</td>
+                        <td class="number-right" data-amount="100.00">₱100.00</td>
+                        <td>Active</td>
+                        <td></td>
                     </tr>
                     <tr data-id="2">
                         <td class="show-details">2</td>
                         <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="User1234">User1234</td>
-                        <td>Deposit</td>
-                        <td data-amount="101.00">₱101.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="OR">OR</td>
+                        <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
+                        <td class="number-right" data-amount="101.00">₱101.00</td>
+                        <td>Active</td>
+                        <td></td>
                     </tr>
                     <tr data-id="3">
                         <td class="show-details">3</td>
                         <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="User123">User123</td>
-                        <td>Deposit</td>
-                        <td data-amount="100.00">₱100.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="SB">SB</td>
+                        <td data-transaction-classification="VATable">VATable</td>
+                        <td class="number-right" data-amount="100.00">₱100.00</td>
+                        <td>Active</td>
+                        <td></td>
                     </tr>
                     <tr data-id="4">
                         <td class="show-details">4</td>
                         <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="User1234">User1234</td>
-                        <td>Deposit</td>
-                        <td data-amount="101.00">₱101.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="SI">SI</td>
+                        <td data-transaction-classification="VATable">VATable</td>
+                        <td class="number-right" data-amount="101.00">₱101.00</td>
+                        <td>Active</td>
+                        <td>Payment from client</td>
                     </tr>
                     <tr data-id="3">
                         <td class="show-details">3</td>
                         <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="User123">User123</td>
-                        <td>Deposit</td>
-                        <td data-amount="100.00">₱100.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="OR">OR</td>
+                        <td data-transaction-classification="VAT Exempt">VAT Exempt</td>
+                        <td class="number-right" data-amount="100.00">₱100.00</td>
+                        <td>Active</td>
+                        <td></td>
                     </tr>
                     <tr data-id="4">
                         <td class="show-details">4</td>
                         <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="User1234">User1234</td>
-                        <td>Deposit</td>
-                        <td data-amount="101.00">₱101.00</td>
-                        <td>Completed</td>
-                        <td>Deposit from client</td>
+                        <td data-user="SB">SB</td>
+                        <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
+                        <td class="number-right" data-amount="101.00">₱101.00</td>
+                        <td>Active</td>
+                        <td></td>
                     </tr>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">Total:</td>
+                        <td class="number-right"><b>₱603.00</b></td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
