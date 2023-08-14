@@ -1,0 +1,119 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | Company {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-gradient-custom-blue">
+                        <h6 class="m-0 font-weight-bold text-white">Company Logo</h6>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="mb-4">
+                            <label for="id_logo" class="form-label">Company Logo (Optional):</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="id_logo" name="logo" onchange="updateLabel(this)">
+                                <label class="custom-file-label" for="id_logo" id="logoLabel">Choose file</label>
+                            </div>
+                            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-gradient-custom-blue">
+                        <h6 class="m-0 font-weight-bold text-white">Create a New Company</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-4">
+                                        <label for="id_code" class="form-label">Code:</label>
+                                        <input type="text" name="code" class="form-control" maxlength="10" required id="id_code">
+                                        <span class="form-text text-danger">{{ form.code.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <label for="id_description" class="form-label">Description:</label>
+                                        <input type="text" name="description" class="form-control" maxlength="250" required id="id_description">
+                                        <span class="form-text text-danger">{{ form.description.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_tin_number" class="form-label">Tin number:</label>
+                                        <input type="text" name="tin_number" class="form-control" maxlength="20" id="id_tin_number">
+                                        <span class="form-text text-danger">{{ form.tin_number.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_telephone_number" class="form-label">Telephone number:</label>
+                                        <input type="text" name="telephone_number" class="form-control" maxlength="20" id="id_telephone_number">
+                                        <span class="form-text text-danger">{{ form.telephone_number.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_address_1" class="form-label">Address 1:</label>
+                                        <input type="text" name="address_1" class="form-control" maxlength="250" id="id_address_1">
+                                        <span class="form-text text-danger">{{ form.address_1.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_address_2" class="form-label">Address 2:</label>
+                                        <input type="text" name="address_2" class="form-control" maxlength="250" id="id_address_2">
+                                        <span class="form-text text-danger">{{ form.address_2.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div> 
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_address_3" class="form-label">Address 3:</label>
+                                        <input type="text" name="address_3" class="form-control" maxlength="250" id="id_address_3">
+                                        <span class="form-text text-danger">{{ form.address_3.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        function updateLabel(input) {
+            if (input.files.length > 0) {
+                document.getElementById("logoLabel").innerHTML = input.files[0].name;
+            } else {
+                document.getElementById("logoLabel").innerHTML = "Choose file";
+            }
+        }
+    </script>
+{% endblock %}

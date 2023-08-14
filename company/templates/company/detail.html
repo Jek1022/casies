@@ -1,0 +1,103 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | Company {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Company Details</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mt-4 mb-4">
+                        <div class="col-md-6">
+                            <!-- Display the logo here -->
+                            {% if company.logo %}
+                                <img src="{{ MEDIA_LOGO_URL }}{{ company.logo }}" class="img-fluid w-100" alt="Company Logo" style="max-width: 200px; max-height: 200px;">
+                            {% else %}
+                                <p>No logo uploaded</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Code:</div>
+                        <div class="col-md-8"><span class="font-weight-bold">{{ company.code }}</span></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Description:</div>
+                        <div class="col-md-8"><span class="font-weight-bold">{{ company.description }}</span></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Address 1:</div>
+                        <div class="col-md-8">{{ company.address_1 }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Address 2:</div>
+                        <div class="col-md-8">{{ company.address_2 }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Address 3:</div>
+                        <div class="col-md-8">{{ company.address_3 }}</div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Telephone number:</div>
+                        <div class="col-md-8">{{ company.telephone_number }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Tin number:</div>
+                        <div class="col-md-8">{{ company.tin_number }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Status:</div>
+                        <div class="col-md-8">{{ company.get_status_display }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Activity Log</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified By:</div>
+                        <div class="col-sm-8">{{ company.modified_by }}</div>
+                    </div>
+                
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified Date:</div>
+                        <div class="col-sm-8">{{ company.modified_date }}</div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-8">
+                            <a href="{% url 'company:update' company.pk %}" class="btn btn-primary btn-sm mr-2" title="Edit">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            <a href="{% url 'company:delete' company.pk %}" class="btn btn-danger btn-sm" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

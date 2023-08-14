@@ -1,0 +1,70 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | Company {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-custom-blue">
+            <h6 class="m-0 font-weight-bold text-white">Company</h6>
+        </div>
+        <div class="card-body">
+            <div class="float-right mb-4">
+                {% if perms.company.add_company %}
+                    <a href="{% url 'company:create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Create New
+                    </a>
+                {% endif %}
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="font-weight-bold text-dark">
+                            <th>ID</th>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for company in companies %}
+                            <tr class="hover-row">
+                                <td>{{ company.id }}</td>
+                                <td>{{ company.code }}</td>
+                                <td>{{ company.description }}</td>
+                                <td>{{ company.get_status_display }}</td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="dropdown mr-2">
+                                            <button class="btn btn-sm btn-transparent" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a href="{% url 'company:update' company.pk %}" class="dropdown-item btn-edit">
+                                                    <i class="fas fa-pencil-alt"></i>&nbsp;&nbsp;Edit
+                                                </a>
+                                                <a href="{% url 'company:delete' company.pk %}" class="dropdown-item btn-delete">
+                                                    <i class="fas fa-trash"></i>&nbsp;&nbsp;Delete
+                                                </a>
+                                            </div>
+                                        </div>
+                                    
+                                        <a href="{% url 'company:detail' company.pk %}" title="View">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

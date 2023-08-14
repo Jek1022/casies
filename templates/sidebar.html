@@ -1,0 +1,98 @@
+<ul class="navbar-nav bg-gradient-custom-blue sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'overview-panel' %}">
+        
+        <div class="sidebar-brand-text mx-3">BIR EIS - SDTS</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Overview Panel -->
+    <li class="nav-item {% if 'overview-panel' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="{% url 'overview-panel' %}">
+            <i class="fas fa-chart-pie"></i>
+            <span>Overview Panel</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Operations
+    </div>
+
+    <li class="nav-item {% if 'cas' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="{% url 'cas:index' %}">
+            <i class="fas fa-desktop"></i>
+            <span>CAS</span>
+        </a>
+    </li>
+
+    <li class="nav-item {% if 'data-transfer' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Data Transfer</span>
+        </a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Management Tools
+    </div>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item {% if 'inquiry' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">
+            <i class="fas fa-search"></i>
+            <span>Inquiry</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item {% if 'maintenance' in active_menu %}active{% endif %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+            aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Maintenance</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {% if 'company' in active_menu %}active{% endif %}" href="{% url 'company:index' %}">Company</a>
+                <a class="collapse-item" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">Company Parameter</a>
+                <!-- <a class="collapse-item" href="{% url 'mainmodule:index' %}">Main Module</a> -->
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item {% if 'utilities' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">
+            <i class="fas fa-users-cog"></i>
+            <span>Utilities</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Tables -->
+    <li class="nav-item {% if 'security' in active_menu %}active{% endif %}">
+        <a class="nav-link" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">
+            <i class="fas fa-shield-alt"></i>
+            <span>Security</span>
+        </a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>
+<!-- End of Sidebar -->

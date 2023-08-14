@@ -1,0 +1,128 @@
+.bg-gradient-custom-blue{
+    background-image: linear-gradient(to right, #285e91, #0076b3);
+}
+
+.login-bg-logo{
+    background-position:center;background-size:cover
+}
+
+.btn-primary {
+    background-color: #0056b3;
+    color: #fff;
+    border-color: #0056b3;
+}
+.btn-primary:hover {
+    background-color: #004199;
+    border-color: #004199;
+}
+.btn-primary:focus,
+.btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.5);
+}
+
+
+/*custom alert modal*/
+.custom-alert{
+    position: fixed;
+    z-index: 999999;
+    right: 0;
+    margin: 20px;
+    font-weight: bold;
+}
+
+
+/* index list */
+.table {
+    background-color: #f5f8ff; /* Change the background color to a light blue */
+}
+/* Set font color for the table rows */
+.hover-row td {
+    color: #202124; /* Set the font color to a dark gray similar to Gmail */
+}
+/* Add hover effect for clickable rows */
+.hover-row {
+    transition: box-shadow 0.2s, border 0.2s, transform 0.2s; /* Add transitions for smooth animation */
+}
+.hover-row:hover {
+    cursor: pointer;
+    border: 1px solid #000;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+/* loading screen */
+#loading-overlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#loading-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+#loading-icon img {
+    width: 180px;
+    height: 140px;
+}
+#loading-icon p {
+    text-align: center;
+    margin-top: -10px;
+}
+
+/* data listing table */
+.datalist-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.datalist-table th,
+.datalist-table td {
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Header styling */
+.datalist-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    position: relative;
+}
+
+.sortable-column {
+    cursor: pointer;
+}
+
+/* Arrow icon styling */
+.sortable-column i {
+    font-size: 12px;
+    vertical-align: middle;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sortable-column.asc i {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Data row styling */
+.datalist-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.datalist-table tbody tr:hover {
+    background-color: #e2e6ea;
+}

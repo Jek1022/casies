@@ -1,0 +1,135 @@
+{% extends 'base-layout.html' %}
+{% block title %} CAS {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">CAS</h1>
+    </div>
+    <p class="mb-4">
+        Computerized Accounting System (CAS) refers to the integration of different component systems to produce computerized books of accounts and computer-generated accounting records and documents. 
+        Learn more at <a target="_blank" href="https://www.bir.gov.ph/index.php/registration-requirements/secondary-registration/application-for-authority-to-use-computerized-accounting-systems.html">BIR official website</a>.
+    </p>
+    <!-- Collapsable Card Example -->
+    <div class="card shadow mb-4">
+        <!-- Card Header - Accordion -->
+        <a href="#collapseCardExample" class="d-block card-header py-3 bg-gradient-custom-blue" data-toggle="collapse"
+            role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold text-white">Data Retrieval</h6>
+        </a>
+        <!-- Card Content - Collapse -->
+        <div class="collapse show" id="collapseCardExample">
+            <div class="card-body">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+                                <div class="input-group" id="date-range">
+                                    <input type="text" class="form-control" name="start" placeholder="From" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="end" placeholder="To" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="row">
+        
+        <div class="col-md-12 mb-4">
+            <form>
+                <div class="form-row">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Filter by Transaction">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Filter by Date">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Filter by Amount">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div> -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <table class="datalist-table shadow">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-list-ol"></i></th>
+                        <th class="sortable-column" data-sort="date">Timestamp <i class="fas fa-arrow-down"></i></th>
+                        <th class="sortable-column" data-sort="user">User <i class="fas fa-arrow-down"></i></th>
+                        <th>Transaction Type</th>
+                        <th class="sortable-column" data-sort="amount">Amount <i class="fas fa-arrow-down"></i></th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-id="1">
+                        <td class="show-details">1</td>
+                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                        <td data-user="User123">User123</td>
+                        <td>Deposit</td>
+                        <td data-amount="100.00">₱100.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                    <tr data-id="2">
+                        <td class="show-details">2</td>
+                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                        <td data-user="User1234">User1234</td>
+                        <td>Deposit</td>
+                        <td data-amount="101.00">₱101.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                    <tr data-id="3">
+                        <td class="show-details">3</td>
+                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                        <td data-user="User123">User123</td>
+                        <td>Deposit</td>
+                        <td data-amount="100.00">₱100.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                    <tr data-id="4">
+                        <td class="show-details">4</td>
+                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                        <td data-user="User1234">User1234</td>
+                        <td>Deposit</td>
+                        <td data-amount="101.00">₱101.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                    <tr data-id="3">
+                        <td class="show-details">3</td>
+                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                        <td data-user="User123">User123</td>
+                        <td>Deposit</td>
+                        <td data-amount="100.00">₱100.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                    <tr data-id="4">
+                        <td class="show-details">4</td>
+                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                        <td data-user="User1234">User1234</td>
+                        <td>Deposit</td>
+                        <td data-amount="101.00">₱101.00</td>
+                        <td>Completed</td>
+                        <td>Deposit from client</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+{% endblock %}

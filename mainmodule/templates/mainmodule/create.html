@@ -1,0 +1,78 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | Main Module {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Create a New Main Module</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_code" class="form-label">Code:</label>
+                                        <input type="text" name="code" class="form-control" maxlength="10" required id="id_code">
+                                        <span class="form-text text-danger">{{ form.code.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_description" class="form-label">Description:</label>
+                                        <input type="text" name="description" class="form-control" maxlength="250" required id="id_description">
+                                        <span class="form-text text-danger">{{ form.description.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_sort_number" class="form-label">Sort number:</label>
+                                        <input type="text" name="sort_number" class="form-control" maxlength="20" id="id_sort_number">
+                                        <span class="form-text text-danger">{{ form.sort_number.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_division" class="form-label">Division:</label>
+                                        <select name="division" class="form-control" id="division">
+                                            {% for value, label in division_choices %}
+                                                <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                          </select>
+                                        <span class="form-text text-danger">{{ form.division.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <label for="id_icon_file" class="form-label">Icon file:</label>
+                                        <input type="text" name="icon_file" class="form-control" maxlength="20" id="id_icon_file">
+                                        <span class="form-text text-danger">{{ form.icon_file.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

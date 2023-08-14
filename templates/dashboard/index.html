@@ -1,0 +1,26 @@
+{% extends 'base-layout.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Overview Panel</h1>
+        <div class="form-group">
+            <div class="input-daterange input-group" id="date-range">
+                <input type="text" class="form-control" name="auto_start_date" placeholder="From" required>
+                <div class="input-group-prepend input-group-append">
+                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                </div>
+                <input type="text" class="form-control" name="auto_end_date" placeholder="To" required>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button">
+                    <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include 'dashboard/row-cards.html' %}
+    {% include 'dashboard/charts.html' %}
+    
+{% endblock %}
