@@ -53,21 +53,29 @@ function showCustomAlert(message, alertType) {
     }, 4000);
 }
 
+
 // Show loading screen
 function showLoadingScreen() {
   document.getElementById('loading-overlay').style.display = 'block';
 }
-// Function to hide the loading animation
 function hideLoadingScreen() {
   // window.addEventListener("load", function() {
-    // setTimeout(function() {
+  //   setTimeout(function() {
       document.getElementById('loading-overlay').style.display = 'none';
-    // }, 4000);
+  //   }, 2000);
   // });
 }
 // Add event listeners for page reload/redirect
-window.addEventListener('beforeunload', showLoadingScreen);
+window.addEventListener('beforeunload', function() {
+  const perfEntries = performance.getEntriesByType('navigation');
+  if (perfEntries.length > 0 && perfEntries[0].type !== 'reload') {
+    hideLoadingScreen();
+  } else {
+    showLoadingScreen();
+  }
+});
 document.addEventListener('DOMContentLoaded', hideLoadingScreen);
+
 
 // data listing table
 $('.sortable-column').click(function() {
