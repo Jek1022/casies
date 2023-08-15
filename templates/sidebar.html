@@ -10,7 +10,7 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Overview Panel -->
-    <li class="nav-item {% if 'overview-panel' in active_menu %}active{% endif %}">
+    <li class="nav-item {% if active_menu == '/' %}active{% endif %}">
         <a class="nav-link" href="{% url 'overview-panel' %}">
             <i class="fas fa-chart-pie"></i>
             <span>Overview Panel</span></a>

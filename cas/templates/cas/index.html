@@ -35,12 +35,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <select class="form-control" id="casType">
                                         <option value="" disabled selected>Select CAS Type</option>
                                         <option value="01">iES Advertisng</option>
                                         <option value="02">Circulation System</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select class="form-control" id="casType">
+                                        <option value="" disabled selected>Select Document Type</option>
+                                        <option value="01">Sales Invoice</option>
+                                        <option value="02">Debit Memo</option>
+                                        <option value="03">Credit Memo</option>
+                                        <option value="04">Service Billing</option>
+                                        <option value="05">Official Receipt</option>
                                     </select>
                                 </div>
                             </div>
@@ -73,7 +85,7 @@
             <table class="datalist-table shadow">
                 <thead>
                     <tr>
-                        <th><i class="fas fa-list-ol"></i></th>
+                        <th></th>
                         <th class="sortable-column" data-sort="date">Issue Date <i class="fas fa-arrow-down"></i></th>
                         <th class="sortable-column" data-sort="user">Document Type <i class="fas fa-arrow-down"></i></th>
                         <th class="sortable-column" data-sort="transaction-classification">Transaction Classification <i class="fas fa-arrow-down"></i></th>
