@@ -1,0 +1,263 @@
+{% extends 'base-layout-datatransmission.html' %}
+{% load humanize %}
+{% block title %} Data Transmission {% endblock %}
+{% block content %}
+
+<section class="multi_step_form"> 
+    <div id="msform"> 
+        <!-- Tittle -->
+        <div class="tittle">
+            <h2>Transmission Process 
+                <span class="icon-with-tooltip " data-toggle="tooltip" data-placement="top" title="In order to transmit data, you have to complete this transmission process.">
+                    <i class="fas fa-info-circle fa-xs"></i>
+                </span>
+            </h2>
+            <p></p>
+        </div>
+        <!-- progressbar -->
+        <ul id="progressbar">
+            <li class="active">Data Retrieval</li>  
+            <li>Transmit</li> 
+            <li>Result</li>
+        </ul>
+        <!-- fieldsets -->
+        <fieldset>
+            <h3>Retrieve Data from CAS</h3>
+            <h6>Review and verify the data before initiating the transmission...</h6> 
+
+            <div class="shadow-sm border mb-md-5">
+                <div class="col-md-12">
+                    <form method="POST" action="{% url 'datatransmission:dataretrieval' %}">
+                        {% csrf_token %}
+                        <div class="row" style="background-color: #f8f9fa; padding: 15px 0; vertical-align: middle;">
+                        
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group" id="date-range">
+                                        <input type="text" class="form-control" name="issue_date_from" value="{{ form_fields.issue_date_from }}" placeholder="From" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="issue_date_to" value="{{ form_fields.issue_date_to }}" placeholder="To" required data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select class="form-control" name="cas_type" id="cas_type">
+                                        {% if form_fields.cas_type %}
+                                            <option value="">All</option>
+                                            {% for cas_type in cas_types %}
+                                                <option value="{{ cas_type.code }}" {% if form_fields.cas_type == cas_type.code %}selected{% endif %}>{{ cas_type.description }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="" disabled selected>Select CAS Type</option>
+                                            {% for cas_type in cas_types %}
+                                                <option value="{{ cas_type.code }}">{{ cas_type.description }}</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select class="form-control" name="document_type" id="document_type">
+                                        {% if form_fields.document_type %}
+                                            <option value="">All</option>
+                                            {% for document_type in document_types %}
+                                                <option value="{{ document_type.code }}" {% if form_fields.document_type == document_type.code %}selected{% endif %}>{{ document_type.description }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="" disabled selected>Select Document Type</option>
+                                            {% for document_type in document_types %}
+                                                <option value="{{ document_type.code }}">{{ document_type.description }}</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary" title="Retrieve"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% if queryset %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-container" style="max-height: 485px;">
+                                <table class="datalist-table shadow tbl-data-retrieval">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th colspan="4">Company SI/OR/SB/DM/CM Information</th>
+                                            <!-- <th colspan="3">Invoice Correction</th> -->
+                                            <th colspan="7">Seller Information</th>
+                                            <th colspan="6">Buyer Information</th>
+                                            <th colspan="10">Line items Information</th>
+                                            <th colspan="5">Discount Information</th>
+                                            <th colspan="1">Other taxable revenue</th>
+                                            <th colspan="1">Total Net Sales After Discounts</th>
+                                            <th colspan="4">Tax Information</th>
+                                            <th colspan="1">Non-taxable</th>
+                                            <th colspan="1">Net Amount Payable</th>
+                                            <th colspan="4">Foreign Currency Information</th>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th class="sortable-column" data-sort="company-invoice">Company Invoice No. <i class="fas fa-arrow-down"></i></th>
+                                            <th class="sortable-column" data-sort="issuance-date">Issuance Date <i class="fas fa-arrow-down"></i></th>
+                                            <th class="sortable-column" data-sort="document-type">Document Type <i class="fas fa-arrow-down"></i></th>
+                                            <th class="sortable-column" data-sort="transaction-classification">Transaction Classification <i class="fas fa-arrow-down"></i></th>
+                                            <!-- <th class="sortable-column" data-sort="amount">Amount <i class="fas fa-arrow-down"></i></th> -->
+                
+                                            <!-- <th>Correction Yes or Not</th>
+                                            <th>e-Invoice correction code</th>
+                                            <th>E-Invoice Unique ID of the document to be corrected</th> -->
+                
+                                            <th>Seller TIN</th>
+                                            <th>Branch Code</th>
+                                            <th>Seller Type</th>
+                                            <th>Registered Name</th>
+                                            <th>Business Name/Trade Name</th>
+                                            <th>Email address</th>
+                                            <th>Registered Address</th>
+                
+                                            <th>Buyer TIN</th>
+                                            <th>Branch Code</th>
+                                            <th>Registered Name</th>
+                                            <th>Business Name/Trade Name</th>
+                                            <th>Email address</th>
+                                            <th>Registered Address</th>
+                                            
+                                            <th>Item Name</th>
+                                            <th>Item Description/Service</th>
+                                            <th>Item Quantity</th>
+                                            <th>Item Unit of measure</th>
+                                            <th>Unit Cost</th>
+                                            <th>Item Sales Amount</th>
+                                            <th>Regular Item Discount Amount</th>
+                                            <th>Special Item Discount Amount</th>
+                                            <th>Net of  Item Sales</th>
+                                            <th>Total of Net  of  Item Sales</th>
+                
+                                            <th>Senior Citizen Discount Amount</th>
+                                            <th>PWD Discount Amount</th>
+                                            <th>Regular Discount Amount</th>
+                                            <th>Special Discount Amount</th>
+                                            <th>Remarks2</th>
+                
+                                            <th>Other taxable revenue</th>
+                                            <th>Total Net Sales After Discounts </th>
+                
+                                            <th>VAT Amount</th>
+                                            <th>Withholding Tax-Income Tax</th>
+                                            <th>Withholding Tax-Business VAT</th>
+                                            <th>Withholding Tax-Business Percentage</th>
+                
+                                            <th>Other Non-taxable charges</th>
+                                            <th>Net Amount Payable</th>
+                
+                                            <th>Currency</th>
+                                            <th>Conversion Rate</th>
+                                            <th>Currency Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in queryset %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td data-company-invoice="{{ item.company_invoice_number }}">{{ item.company_invoice_number }}</td>
+                                                <td data-issuance-date="{{ item.issue_date }}">{{ item.issue_date }}</td>
+                                                <td data-document-type="{{ item.get_document_type_display }}">{{ item.get_document_type_display }}</td>
+                                                <td data-transaction-classification="{{ item.get_transaction_classification_display }}">{{ item.get_transaction_classification_display }}</td>
+
+                                                <td>{{ item.seller_info_tin }}</td>
+                                                <td>{{ item.seller_info_branch_code }}</td>
+                                                <td>{{ item.get_seller_info_type_display }}</td>
+                                                <td>{{ item.seller_info_registered_name }}</td>
+                                                <td>{{ item.seller_info_business_name }}</td>
+                                                <td>{{ item.seller_info_email|default:"" }}</td>
+                                                <td>{{ item.seller_info_registered_address }}</td>
+
+                                                <td>{{ item.buyer_info_tin }}</td>
+                                                <td>{{ item.buyer_info_branch_code }}</td>
+                                                <td>{{ item.buyer_info_registered_name }}</td>
+                                                <td>{{ item.buyer_info_business_name }}</td>
+                                                <td>{{ item.buyer_info_email|default:"" }}</td>
+                                                <td>{{ item.buyer_info_registered_address }}</td>
+
+                                                <td>{{ item.item_list_name }}</td>
+                                                <td>{{ item.item_list_description }}</td>
+                                                <td>{{ item.item_list_quantity }}</td>
+                                                <td>{{ item.item_list_unit_of_measure|default:"" }}</td>
+                                                <td class="number-right">{{ item.item_list_unit_cost|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.item_list_sales_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.item_list_regular_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.item_list_special_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.item_list_net_of_sales|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.item_list_total_net_sales|floatformat:2|intcomma }}</td>
+
+                                                <td class="number-right">{{ item.senior_citizen_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.pwd_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.regular_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.special_discount_amount|floatformat:2|intcomma }}</td>
+                                                <td>{{ item.remarks_2|default:"" }}</td>
+
+                                                <td class="number-right">{{ item.other_tax_revenue|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.total_net_sales_after_discounts|floatformat:2|intcomma }}</td>
+
+                                                <td class="number-right">{{ item.vat_amount|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.withholding_tax_income_tax|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.withholding_tax_business_vat|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.withholding_tax_business_percentage|floatformat:2|intcomma }}</td>
+
+                                                <td class="number-right">{{ item.other_non_taxable_charges|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.net_amount_payable|floatformat:2|intcomma }}</td>
+
+                                                <td>{{ item.currency|default:"" }}</td>
+                                                <td class="number-right">{{ item.conversion_rate|floatformat:2|intcomma }}</td>
+                                                <td class="number-right">{{ item.forex_amount|floatformat:2|intcomma }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td class="auto-colspan text-center">No items found.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    
+                                    <tfoot >
+                                        <tr style="background-color:floralwhite;">
+                                            <td colspan="4">Total</td>
+                                            <td colspan="36"></td>
+                                            <td class="number-right"><b>₱{{ totals.total_net_amount_payable|floatformat:2|intcomma }}</b></td>
+                                            <td colspan="3"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% elif initiated %}
+                    <span class="text-dark">-</span>
+                {% else %}
+                    <span class="text-dark">No items found.</span>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <a href="{% url 'datatransmission:index' %}" class="action-button previous_button">Back</a>
+                {% if queryset %}
+                    <form action="{% url 'datatransmission:datatransmit' %}" method="POST" class="d-none d-sm-inline-block form-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="json_data" id="json_data" value="{{ json_data }}"/>
+                        <button type="submit" class="next action-button">Continue</button> 
+                    </form>
+                {% endif %}
+            </div>
+        </fieldset>
+          
+    </div>  
+</section> 
+
+{% endblock %}

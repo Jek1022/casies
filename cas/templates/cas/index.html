@@ -10,15 +10,15 @@
         Computerized Accounting System (CAS) refers to the integration of different component systems to produce computerized books of accounts and computer-generated accounting records and documents. 
         Learn more at <a target="_blank" href="https://www.bir.gov.ph/index.php/registration-requirements/secondary-registration/application-for-authority-to-use-computerized-accounting-systems.html">BIR official website</a>.
     </p>
-    <!-- Collapsable Card Example -->
+    <!-- Collapsable Card -->
     <div class="card shadow mb-4">
         <!-- Card Header - Accordion -->
-        <a href="#collapseCardExample" class="d-block card-header py-3 bg-gradient-custom-blue" data-toggle="collapse"
-            role="button" aria-expanded="true" aria-controls="collapseCardExample">
+        <a href="#collapseCardDataRetrieval" class="d-block card-header py-3 bg-gradient-custom-blue" data-toggle="collapse"
+            role="button" aria-expanded="true" aria-controls="collapseCardDataRetrieval">
             <h6 class="m-0 font-weight-bold text-white">Data Retrieval</h6>
         </a>
         <!-- Card Content - Collapse -->
-        <div class="collapse show" id="collapseCardExample">
+        <div class="collapse show" id="collapseCardDataRetrieval">
             <div class="card-body">
                 
                 <div class="row">
@@ -82,82 +82,177 @@
     </div> -->
     <div class="row">
         <div class="col-md-12 mb-4">
-            <table class="datalist-table shadow">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th class="sortable-column" data-sort="date">Issue Date <i class="fas fa-arrow-down"></i></th>
-                        <th class="sortable-column" data-sort="user">Document Type <i class="fas fa-arrow-down"></i></th>
-                        <th class="sortable-column" data-sort="transaction-classification">Transaction Classification <i class="fas fa-arrow-down"></i></th>
-                        <th class="sortable-column" data-sort="amount">Amount <i class="fas fa-arrow-down"></i></th>
-                        <th>Status</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr data-id="1">
-                        <td class="show-details">1</td>
-                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="SI">SI</td>
-                        <td data-transaction-classification="VATable">VATable</td>
-                        <td class="number-right" data-amount="100.00">₱100.00</td>
-                        <td>Active</td>
-                        <td></td>
-                    </tr>
-                    <tr data-id="2">
-                        <td class="show-details">2</td>
-                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="OR">OR</td>
-                        <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
-                        <td class="number-right" data-amount="101.00">₱101.00</td>
-                        <td>Active</td>
-                        <td></td>
-                    </tr>
-                    <tr data-id="3">
-                        <td class="show-details">3</td>
-                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="SB">SB</td>
-                        <td data-transaction-classification="VATable">VATable</td>
-                        <td class="number-right" data-amount="100.00">₱100.00</td>
-                        <td>Active</td>
-                        <td></td>
-                    </tr>
-                    <tr data-id="4">
-                        <td class="show-details">4</td>
-                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="SI">SI</td>
-                        <td data-transaction-classification="VATable">VATable</td>
-                        <td class="number-right" data-amount="101.00">₱101.00</td>
-                        <td>Active</td>
-                        <td>Payment from client</td>
-                    </tr>
-                    <tr data-id="3">
-                        <td class="show-details">3</td>
-                        <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
-                        <td data-user="OR">OR</td>
-                        <td data-transaction-classification="VAT Exempt">VAT Exempt</td>
-                        <td class="number-right" data-amount="100.00">₱100.00</td>
-                        <td>Active</td>
-                        <td></td>
-                    </tr>
-                    <tr data-id="4">
-                        <td class="show-details">4</td>
-                        <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
-                        <td data-user="SB">SB</td>
-                        <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
-                        <td class="number-right" data-amount="101.00">₱101.00</td>
-                        <td>Active</td>
-                        <td></td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="4">Total:</td>
-                        <td class="number-right"><b>₱603.00</b></td>
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="table-container">
+                <table class="datalist-table shadow">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th colspan="4">Company SI/OR/SB/DM/CM Information</th>
+                            <!-- <th colspan="3">Invoice Correction</th> -->
+                            <th colspan="7">Seller Information</th>
+                            <th colspan="6">Buyer Information</th>
+                            <th colspan="10">Line items Information</th>
+                            <th colspan="5">Discount Information</th>
+                            <th colspan="2"></th>
+                            <th colspan="4">Tax Information</th>
+                            <th colspan="2"></th>
+                            <th colspan="4">Foreign Currency Information</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Company Invoice No.</th>
+                            <th class="sortable-column" data-sort="date">Issuance Date <i class="fas fa-arrow-down"></i></th>
+                            <th class="sortable-column" data-sort="user">Document Type <i class="fas fa-arrow-down"></i></th>
+                            <th class="sortable-column" data-sort="transaction-classification">Transaction Classification <i class="fas fa-arrow-down"></i></th>
+                            <!-- <th class="sortable-column" data-sort="amount">Amount <i class="fas fa-arrow-down"></i></th> -->
+
+                            <!-- <th>Correction Yes or Not</th>
+                            <th>e-Invoice correction code</th>
+                            <th>E-Invoice Unique ID of the document to be corrected</th> -->
+
+                            <th>Seller TIN</th>
+                            <th>Branch Code</th>
+                            <th>Seller Type</th>
+                            <th>Registered Name</th>
+                            <th>Business Name/Trade Name</th>
+                            <th>Email address</th>
+                            <th>Registered Address</th>
+
+                            <th>Buyer TIN</th>
+                            <th>Branch Code</th>
+                            <th>Registered Name</th>
+                            <th>Business Name/Trade Name</th>
+                            <th>Email address</th>
+                            <th>Registered Address</th>
+                            
+                            <th>Item Name</th>
+                            <th>Item Description/Service</th>
+                            <th>Item Quantity</th>
+                            <th>Item Unit of measure</th>
+                            <th>Unit Cost</th>
+                            <th>Item Sales Amount</th>
+                            <th>Regular Item Discount Amount</th>
+                            <th>Special Item Discount Amount</th>
+                            <th>Net of  Item Sales</th>
+                            <th>Total of Net  of  Item Sales</th>
+
+                            <th>Senior Citizen Discount Amount</th>
+                            <th>PWD Discount Amount</th>
+                            <th>Regular Discount Amount</th>
+                            <th>Special Discount Amount</th>
+                            <th>Remarks2</th>
+
+                            <th>Other taxable revenue</th>
+                            <th>Total Net Sales After Discounts </th>
+
+                            <th>VAT Amount</th>
+                            <th>Withholding Tax-Income Tax</th>
+                            <th>Withholding Tax-Business VAT</th>
+                            <th>Withholding Tax-Business Percentage</th>
+
+                            <th>Other Non-taxable charges</th>
+                            <th>Net Amount Payable</th>
+
+                            <th>Foreign Currency</th>
+                            <th>Currency</th>
+                            <th>Conversion Rate</th>
+                            <th>Currency Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="auto-colspan text-center">No items found.</td>
+                        </tr>
+                    </tbody>
+                    <!-- <tbody>
+                        <tr data-id="1">
+                            <td class="show-details">1</td>
+                            <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                            <td data-user="SI">SI</td>
+                            <td data-transaction-classification="VATable">VATable</td>
+                            <td class="number-right" data-amount="100.00">₱100.00</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="2">
+                            <td class="show-details">2</td>
+                            <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                            <td data-user="OR">OR</td>
+                            <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
+                            <td class="number-right" data-amount="101.00">₱101.00</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="3">
+                            <td class="show-details">3</td>
+                            <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                            <td data-user="SB">SB</td>
+                            <td data-transaction-classification="VATable">VATable</td>
+                            <td class="number-right" data-amount="100.00">₱100.00</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="4">
+                            <td class="show-details">4</td>
+                            <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                            <td data-user="SI">SI</td>
+                            <td data-transaction-classification="VATable">VATable</td>
+                            <td class="number-right" data-amount="101.00">₱101.00</td>
+                            <td>Active</td>
+                            <td>Payment from client</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="3">
+                            <td class="show-details">3</td>
+                            <td data-date="2023-07-01 08:30:00">2023-07-01 08:30:00</td>
+                            <td data-user="OR">OR</td>
+                            <td data-transaction-classification="VAT Exempt">VAT Exempt</td>
+                            <td class="number-right" data-amount="100.00">₱100.00</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="4">
+                            <td class="show-details">4</td>
+                            <td data-date="2023-07-01 08:31:00">2023-07-01 08:31:00</td>
+                            <td data-user="SB">SB</td>
+                            <td data-transaction-classification="Zero-Rated">Zero-Rated</td>
+                            <td class="number-right" data-amount="101.00">₱101.00</td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                            <td>Active</td>
+                            <td></td>
+                        </tr>
+                    </tbody> -->
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">Total:</td>
+                            <td class="number-right"><b>₱603.00</b></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
     

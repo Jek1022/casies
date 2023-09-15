@@ -60,7 +60,7 @@
     right: 0;
     bottom: 0;
     position: fixed;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,19 +74,27 @@
     height: 100%;
 }
 #loading-icon img {
-    width: 180px;
-    height: 140px;
+    width: 280px;
+    height: 200px;
 }
 #loading-icon p {
+    color: #111111;
+    font-size: 16px;
     text-align: center;
-    margin-top: -10px;
+    margin-top: -40px;
+    font-weight: 400;
 }
 
 /* data listing table */
+.table-container{
+    overflow: auto;
+}
 .datalist-table {
-    width: 100%;
-    border-collapse: collapse;
+    width: auto;
+    border-collapse: separate;
     border-spacing: 0;
+    table-layout: auto;
+    white-space: nowrap;
 }
 .datalist-table td {
     font-size: 14px;
@@ -124,6 +132,20 @@
 .sortable-column.asc i {
     transform: translateY(-50%) rotate(180deg);
 }
+/* .datalist-table thead, tbody, tr{
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+} */
+/* .datalist-table thead { */
+    /* scrollbar is average 1em/16px width, remove it from thead width */
+    /* width: calc( 100% - 1em )
+} */
+/* .datalist-table tbody{
+    display: block;
+    max-height: 300px;
+    overflow: auto;
+} */
 /* Data row styling */
 .datalist-table tbody tr:nth-child(even) {
     background-color: #f8f9fa;

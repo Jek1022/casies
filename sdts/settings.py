@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'module',
     'mainmodule',
     'cas',
+    'datatransmission',
 ]
 
 MIDDLEWARE = [

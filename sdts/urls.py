@@ -29,8 +29,9 @@ urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^accounts/', include('django.contrib.auth.urls')),
 
-    # Maintenance URLs
+    
     re_path(r'^cas/', include('cas.urls', namespace='cas')),
+    re_path(r'^datatransmission/', include('datatransmission.urls', namespace='datatransmission')),
     re_path(r'^maintenance/mainmodule/', include('mainmodule.urls', namespace='mainmodule')),
     re_path(r'^maintenance/company/', include('company.urls', namespace='company')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

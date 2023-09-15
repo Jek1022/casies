@@ -1,0 +1,39 @@
+{% extends 'base-layout-datatransmission.html' %}
+{% load humanize %}
+{% block title %} Data Transmission {% endblock %}
+{% block content %}
+
+<section class="multi_step_form"> 
+    <div id="msform"> 
+        <!-- Tittle -->
+        <div class="tittle">
+            <h2>Transmission Process 
+                <span class="icon-with-tooltip " data-toggle="tooltip" data-placement="top" title="In order to transmit data, you have to complete this transmission process.">
+                    <i class="fas fa-info-circle fa-xs"></i>
+                </span>
+            </h2>
+            <p></p>
+        </div>
+        <!-- progressbar -->
+        <ul id="progressbar">
+            <li class="done">Data Retrieval</li>  
+            <li class="active">Transmit</li> 
+            <li>Result</li>
+        </ul>
+        <!-- fieldsets -->
+        <fieldset>
+            <h3>Data Transmission Process</h3>
+            <h6>Transmit data to BIR EIS</h6> 
+
+            {% for item in queryset %}
+                <pre><code>{{ item }}</code></pre>
+            {% endfor %}
+
+            <!-- <a href="{% url 'datatransmission:index' %}" class="action-button previous_button">Back</a>
+            <button type="submit" class="next action-button" disabled="True">Continue</button>  -->
+                
+        </fieldset>
+          
+    </div>  
+</section> 
+{% endblock %}

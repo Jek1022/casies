@@ -15,6 +15,9 @@ $(document).ready(function() {
     $('[name="auto_start_date"]').datepicker('setDate', firstDayOfMonth);
     $('[name="auto_end_date"]').datepicker('setDate', lastDayOfMonth);
     // End DASHBOARD auto date range (monthly)
+
+    // tooltip
+    $('[data-toggle="tooltip"]').tooltip();
     
 });
 
@@ -107,3 +110,4 @@ $('.sortable-column').click(function() {
       tbody.append(row);
   });
 });
+$('.auto-colspan').attr('colspan', $('th').length).css('width', $('.datalist-table').width());

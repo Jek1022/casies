@@ -1,0 +1,34 @@
+{% extends 'base-layout.html' %}
+{% block title %} Data Transmission {% endblock %}
+
+{% block content %}
+<style>
+    .scan-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #1d6195;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .scan-button:hover {
+        color: #f1f1f1;
+        text-decoration: none;
+    }
+
+    .fa-user-lock {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 10px;
+        font-size: 24px;
+    }
+</style>
+<a href="{% url 'datatransmission:initiate' %}" class="scan-button shadow-sm">
+    <i class="fas fa-user-lock"></i> Initiate and Authenticate
+</a>
+{% endblock %}

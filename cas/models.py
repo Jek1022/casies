@@ -138,3 +138,88 @@ class Cas(models.Model):
     def status_verbose(self):
         return dict(self.STATUS_CHOICES).get(self.status)
     
+    def to_json_format(self, pks):
+        item_list = []
+        for pk in pks:
+            item = Cas.objects.filter(pk=pk).values(
+                'item_list_name', 
+                'item_list_description', 
+                'item_list_quantity', 
+                'item_list_unit_of_measure', 
+                'item_list_unit_cost', 
+                'item_list_sales_amount', 
+                'item_list_regular_discount_amount', 
+                'item_list_special_discount_amount',
+                'item_list_net_of_sales'
+            )
+            
+            item_list.append({
+                "Nm":           item[0]['item_list_name'],
+                "Desc":         item[0]['item_list_description'],
+                "Qty":          item[0]['item_list_quantity'],
+                "Unit":         item[0]['item_list_unit_cost'],
+                "UnitCost":     item[0]['item_list_unit_cost'],
+                "SalesAmt":     item[0]['item_list_sales_amount'],
+                "RegDscntAmt":  item[0]['item_list_regular_discount_amount'],
+                "SpeDscntAmt":  item[0]['item_list_special_discount_amount'],
+                "NetSales":     item[0]['item_list_net_of_sales']
+            })
+            
+        json_data = {
+            "CompInvoiceId":    self.company_invoice_number,
+            "IssueDtm":         self.issue_date,
+            "EisUniqueId":      self.eis_unique_id,
+            "DocType":          self.document_type,
+            "TransClass":       self.transaction_classification,
+            "CorrYN":           self.is_correction,
+            "CorrectionCd":     self.correction_code,
+            "PrevUniqueId":     self.previous_unique_id,
+            "Rmk1":             self.remarks_1,
+            "SellerInfo": {
+                "Tin":          self.seller_info_tin,
+                "BranchCd":     self.seller_info_branch_code,
+                "Type":         self.seller_info_type,
+                "RegNm":        self.seller_info_registered_name,
+                "BusinessNm":   self.seller_info_registered_name,
+                "Email":        self.seller_info_email,
+                "RegAddr":      self.seller_info_registered_address
+            },
+            "BuyerInfo": {
+                "Tin":          self.buyer_info_tin,
+                "BranchCd":     self.buyer_info_branch_code,
+                "RegNm":        self.buyer_info_registered_name,
+                "BusinessNm":   self.buyer_info_business_name,
+                "Email":        self.buyer_info_email,
+                "RegAddr":      self.buyer_info_registered_address,
+                "DevAddr":      self.buyer_info_delivery_address,
+                "AirNum":       self.buyer_info_airway_bill_number,
+                "AirNumDt":     self.buyer_info_airway_bill_number_date,
+                "LadNum":       self.buyer_info_bill_of_lading_number,
+                "LadNumDt":     self.buyer_info_bill_of_lading_number_date
+            },
+            "ItemList": item_list,
+            "TotNetItemSales": self.item_list_total_net_sales,
+            "Discount": {
+                "ScAmt":    self.senior_citizen_discount_amount,
+                "PwdAmt":   self.pwd_discount_amount,
+                "RegAmt":   self.regular_discount_amount,
+                "SpeAmt":   self.special_discount_amount,
+                "Rmk2":     self.remarks_2
+            },
+            "OtherTaxRev":          self.other_tax_revenue,
+            "TotNetSalesAftDisct":  self.total_net_sales_after_discounts,
+            "VATAmt":               self.vat_amount,
+            "WithholdIncome":       self.withholding_tax_income_tax,
+            "WithholdBusVAT":       self.withholding_tax_business_vat,
+            "WithholdBusPT":        self.withholding_tax_business_percentage,
+            "OtherNonTaxCharge":    self.other_non_taxable_charges,
+            "NetAmtPay":            self.net_amount_payable,
+            "ForCur": { 
+                "Currency": self.currency,
+                "ForexAmt": self.forex_amount, 
+                "ConvRate": self.conversion_rate
+            },
+            "PtuNum":   self.ptu_number
+        }
+
+        return json_data
