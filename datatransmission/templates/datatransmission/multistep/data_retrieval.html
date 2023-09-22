@@ -18,7 +18,7 @@
         <ul id="progressbar">
             <li class="active">Data Retrieval</li>  
             <li>Transmit</li> 
-            <li>Result</li>
+            <li>Inquiry Result</li>
         </ul>
         <!-- fieldsets -->
         <fieldset>
@@ -165,8 +165,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!-- error:salmon -->
                                         {% for item in queryset %}
-                                            <tr>
+                                            <tr 
+                                                    {% if item.company_invoice_number in validated_invoices %} 
+                                                        style="background-color:salmon;" 
+                                                    {% endif %} 
+                                                    id="{{ item.company_invoice_number }}"
+                                                >
                                                 <td>{{ forloop.counter }}</td>
                                                 <td data-company-invoice="{{ item.company_invoice_number }}">{{ item.company_invoice_number }}</td>
                                                 <td data-issuance-date="{{ item.issue_date }}">{{ item.issue_date }}</td>
@@ -245,19 +251,103 @@
                     <span class="text-dark">No items found.</span>
                 {% endif %}
             </div>
+
+            <!-- Validation Summary -->
+            {% if queryset %}
+                <div class="error-list-container shadow-xs">
+                    {% if validation_summary %}
+
+                        <div class="error-list-heading">
+                            <h3>Validation Summary</h3>
+                            <span>Total Items: {{ validation_summary|length }}</span>
+                        </div>
+                        <table class="error-table">
+                            {% for item in validation_summary %}
+                                <tr>
+                                    <td class="error-label"><a href="#{{ item.invoice_number }}">{{ item.invoice_number }}:</a></td>
+                                    <td class="error-messages">
+                                        <ul>
+                                            {% for error_item in item.items %}
+                                                <li title="{{ error_item.field_value }}">{{ error_item.error_message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <table class="error-table p-5">
+                            <tr class="text-center">
+                                <td>
+                                    <strong class="text-success">All the data to transmit have passed the validation!</strong>
+                                    <span class="icon-with-tooltip" data-toggle="tooltip" data-placement="right" title="Prior to transmission, the system validates all data.">
+                                        <i class="fas fa-info-circle fa-xs"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
             <div class="mb-4">
-                <a href="{% url 'datatransmission:index' %}" class="action-button previous_button">Back</a>
-                {% if queryset %}
-                    <form action="{% url 'datatransmission:datatransmit' %}" method="POST" class="d-none d-sm-inline-block form-inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="json_data" id="json_data" value="{{ json_data }}"/>
-                        <button type="submit" class="next action-button">Continue</button> 
-                    </form>
+                <a href="{% url 'datatransmission:index' %}" class="action-button previous_button"><i class="fas fa-long-arrow-alt-left"></i> &nbsp;Back</a>
+                {% if queryset and not validation_summary%}
+                    <div class="d-none d-sm-inline-block form-inline">
+                        <form action="{% url 'datatransmission:datatransmit' %}" method="POST" id="transmitForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="json_data" id="json_data" value="{{ json_data }}"/>
+                        </form>
+                        <button type="button" class="next action-button" data-toggle="modal" data-target="#confirmModal" title="Continue">Continue&nbsp; <i class="fas fa-long-arrow-alt-right"></i></button> 
+                    </div>
                 {% endif %}
             </div>
         </fieldset>
-          
-    </div>  
+        
+    </div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Please confirm</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="display: flex; align-items: baseline;">
+                        <input type="checkbox" id="confirm" style="margin-right: 10px;">
+                        <label for="confirm">I confirm that I've reviewed all the information pertaining to this transmission.</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="confirmTransmission" disabled>Confirmed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section> 
 
+<script>
+    $(document).ready(function(){
+        $("#confirmTransmission").click(function(e){
+            e.preventDefault();
+            if ($('#confirm').is(":checked")){
+                $("#confirmModal").modal("toggle");
+                $("#confirm").prop("checked", false);
+                $("#transmitForm").submit();
+            } else {
+                showCustomAlert('Too fast! Please confirm the transmission first to continue.', 'warning');
+            }
+        });
+
+        $("#confirm").change(function(){
+            $('#confirmTransmission').prop('disabled', !this.checked);
+        });
+    });
+</script>
 {% endblock %}

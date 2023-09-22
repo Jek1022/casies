@@ -1,5 +1,8 @@
-import decimal
+import hmac
 import json
+import base64
+import hashlib
+import requests
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -13,6 +16,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.db.models import Sum, F, ExpressionWrapper, DateField, When, Case, Value, IntegerField, Q
 from cas.models import Cas
 from .models import DataTransmissionModel
+from .helpers import DataValidator, DecimalEncoder
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -42,6 +46,7 @@ def authenticate():
     if True:
         is_authenticated = True
     return is_authenticated
+
 
 class DataRetrieval(ListView):
     template_name = 'datatransmission/multistep/data_retrieval.html'
@@ -79,10 +84,24 @@ class DataRetrieval(ListView):
 
                 json_queryset = serializers.serialize('json', queryset)
                 json_data = [entry['pk'] for entry in json.loads(json_queryset)]
+
+                validation_summary = []
+                for datarow in queryset:
+
+                    validated_row = DataValidator().validate(datarow)
+                    if validated_row:
+                        validation_summary.append({
+                            'invoice_number':datarow.company_invoice_number,
+                            'items': validated_row
+                        })
+
+                validated_invoices = {item['invoice_number'] for item in validation_summary}
                 
                 context = {
                     'queryset': queryset,
                     'json_data': json.dumps(json_data),
+                    'validation_summary': validation_summary,
+                    'validated_invoices': validated_invoices,
                     'cas_types': cas_types,
                     'document_types': document_types,
                     'totals': totals,
@@ -121,10 +140,8 @@ class DataTransmit(View):
                     )
                     
                 for invoice_number, pks in grouped_list.items():
-                    # pk=pks[0]
-                    # print(invoice_number)
                     cas = Cas.objects.get(pk=pks[0]).to_json_format(pks)
-                    # the actual api process here
+                    # the actual api process here (?)
                     json_datalist.append(json.dumps(cas, cls=DecimalEncoder))
 
                 return render(request, self.template_name, {'queryset': json_datalist})
@@ -133,13 +150,6 @@ class DataTransmit(View):
                 return JsonResponse({'error': error_message})
             
         return render(request, self.template_name)
-        
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, decimal.Decimal):
-            return round(float(obj), 2)  # Convert Decimal to float and round to 2 decimal places
-        return super(DecimalEncoder, self).default(obj)
     
 
 def get_cas_type():
@@ -171,4 +181,5 @@ def format_date(start_date, end_date):
         return formatted_start_date, formatted_end_date
     except ValueError:
         return None, None
+
         

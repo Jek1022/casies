@@ -188,3 +188,55 @@
   bottom: 0;
   z-index: 1;
 }
+
+/* Style for the error list container */
+.error-list-container {
+  background-color: #f8f9fa; /* Card background color */
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 0 20px;
+  margin-bottom: 2rem;
+  text-align: left; /* Align text to the left */
+  overflow: auto;
+  max-height: 585px;
+}
+
+/* Style for the error list heading */
+.error-list-heading {
+  margin-bottom: 10px; 
+  padding: 10px 5px;
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 1;
+}
+.error-list-heading h3{
+  font-size: 18px;
+}
+.error-list-heading span{
+  margin-right: 0;
+}
+.error-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.error-table td {
+  padding: 8px;
+  border: 1px solid #eaf0f4;
+}
+.error-label {
+  color: #1d6195;
+  font-weight: bold;
+  vertical-align: top;
+  padding-right: 10px;
+}
+.error-messages {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.error-messages li {
+  color: #fa8072;
+  margin-left: 20px;
+  margin-bottom: 5px;
+}

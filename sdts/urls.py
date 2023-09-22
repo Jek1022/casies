@@ -34,4 +34,5 @@ urlpatterns = [
     re_path(r'^datatransmission/', include('datatransmission.urls', namespace='datatransmission')),
     re_path(r'^maintenance/mainmodule/', include('mainmodule.urls', namespace='mainmodule')),
     re_path(r'^maintenance/company/', include('company.urls', namespace='company')),
+    re_path(r'^maintenance/eiscredential/', include('eiscredential.urls', namespace='eiscredential')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

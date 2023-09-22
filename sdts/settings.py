@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'mainmodule',
     'cas',
     'datatransmission',
+    'eiscredential',
 ]
 
 MIDDLEWARE = [

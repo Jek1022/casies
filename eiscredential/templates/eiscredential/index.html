@@ -1,0 +1,63 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | EIS Credential {% endblock %}
+
+{% block content %}
+<style>
+    .hover-float {
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out, backface-visibility 0.3s;
+    }
+    .hover-float:hover {
+        transform: scale(1.05);
+        backface-visibility: hidden;
+    }
+</style>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-custom-blue">
+            <h6 class="m-0 font-weight-bold text-white">EIS Credential</h6>
+        </div>
+        <div class="card-body text-center">
+            <label class="form-label m-4">Select Credential Mode:</label>
+            <div class="row">
+                <div class="col-xl-3 col-md-3">
+
+                </div>
+                <div class="col-xl-3 col-md-3 mb-4">
+                    <div class="card shadow h-100 py-2 hover-float">
+                        <a href="{% url 'eiscredential:detail' %}?m=u" style="text-decoration: none; color: inherit; outline: none;">
+                            <div class="card-body">
+                                <div class="no-gutters text-center">
+                                    <div class="h5 font-weight-bold text-gray-800">UAT</div>
+                                    <i class="fas fa-circle text-gray"></i>
+                                    <div class="text-gray-800">(Sandbox)</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-3 mb-4">
+                    <div class="card shadow h-100 py-2 hover-float">
+                        <a href="{% url 'eiscredential:detail' %}?m=p" style="text-decoration: none; color: inherit; outline: none;">
+                            <div class="card-body">
+                                <div class="no-gutters text-center">
+                                    <div class="h5 font-weight-bold text-gray-800">Production</div>
+                                    <i class="fas fa-circle text-success"></i>
+                                    <div class="text-gray-800">(Live)</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

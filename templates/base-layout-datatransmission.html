@@ -49,15 +49,39 @@
                             <i class="fa fa-bars"></i>
                         </button>
 
-                        <span>BIR EIS - TAXPAYER PORTAL (Sales Data Transmission System v1.0.0)</span>
+                        <!-- <span>BIR EIS - TAXPAYER PORTAL (Sales Data Transmission System v1.0.0)</span> -->
                         <!-- <span class="ml-auto">Sales Data Transmission System</span> -->
+
+                        <span>BIR EIS - TAXPAYER PORTAL (Sales Data Transmission System v1.0.0)</span>
+                        <ul class="navbar-nav ml-auto">
+                            <div class="topbar-divider d-none d-sm-block"></div>
+                        
+                            <!-- Nav Item - User Information -->
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link" href="#" id="userDropdown" role="button"
+                                     aria-haspopup="true" aria-expanded="false">
+                                    <div class="img-profile rounded-circle">
+                                        <svg class="w-5 h-5 mr-2 rounded-full" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                        {% if request.user.is_authenticated %}
+                                            {{ request.user.username }}
+                                        {% else %}
+                                            You are not logged in.
+                                        {% endif %}
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
                     </nav>
                 <!-- End of Topbar -->
 
                 <div id="loading-overlay">
                     <div id="loading-icon">
                         <img src="/media/straight-loader.gif" alt="Loading...">
-                        <p>Loading...</p>
+                        <p class="bg-white">Just a moment while we fetch the information.</p>
                     </div>
                 </div>
 
@@ -82,27 +106,6 @@
         </div>
         <!-- End of Content Wrapper -->
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Logout Modal-->
-
      <!-- Bootstrap core JavaScript-->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
@@ -113,9 +116,9 @@
 
     
     <!-- Popper JS -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'></script>
+    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'></script> -->
     <!-- jQuery Nice Select JS -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js'></script>
+    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js'></script> -->
     <!-- Initialization -->
     <!-- <script src="{% static 'js/multistep-form/script.js' %}"></script> -->
     <!-- Custom scripts for all pages-->
