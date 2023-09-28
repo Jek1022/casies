@@ -7,13 +7,114 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
     </div>
+    <div class="alert alert-danger mb-4 alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p class="mb-0"><strong>Confidential Information:</strong> This page contains confidential information, including API credentials. Please do not share or expose this information.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">EIS Credential Details
+                        {% if eiscredential.access_level|lower == 'u' %}
+                            (Sandbox) <i class="fas fa-circle text-gray-500"></i>
+                        {% elif eiscredential.access_level|lower == 'p' %}
+                            (Live) <i class="fas fa-circle text-success"></i>
+                        {% endif %}
+                    </h6>
+                </div>
+                
+                <div class="card-body">
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Public Key:</div>
+                        <div class="col-md-8">{{ eiscredential.public_key|slice:":50" }}...</div>
+                    </div>
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-gradient-custom-blue">
-            <h6 class="m-0 font-weight-bold text-white">EIS Credential Details</h6>
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">User ID:</div>
+                        <div class="col-md-8">{{ eiscredential.user_id }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Password:</div>
+                        <div class="col-md-8">{{ eiscredential.user_password }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Application ID:</div>
+                        <div class="col-md-8">{{ eiscredential.application_id }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Application Secret Key:</div>
+                        <div class="col-md-8">{{ eiscredential.application_secret_key }}</div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Accreditation ID (EIS Cert No.):</div>
+                        <div class="col-md-8">{{ eiscredential.accreditation_id }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">JWS Key ID:</div>
+                        <div class="col-md-8">{{ eiscredential.jws_key_id }}</div>
+                    </div>
+
+                    <div class="form-group row mt-4">
+                        <div class="col-md-4 text-primary">Force Refreh Token:</div>
+                        <div class="col-md-8">
+                            {% if eiscredential.force_refresh_token == 'true'  %}
+                                On
+                            {% elif eiscredential.force_refresh_token == 'false' %}
+                                Off
+                            {% endif %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row mt-4">
+                        <div class="col-md-4 text-primary">Authentication URL:</div>
+                        <div class="col-md-8">{{ eiscredential.authentication_url }}</div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Invoice Issuance URL:</div>
+                        <div class="col-md-8">{{ eiscredential.invoices_url }}</div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Inquiry Result URL:</div>
+                        <div class="col-md-8">{{ eiscredential.inquiry_result_url }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">Activity Log</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified By:</div>
+                        <div class="col-sm-8">{{ eiscredential.modified_by }}</div>
+                    </div>
+                
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified Date:</div>
+                        <div class="col-sm-8">{{ eiscredential.modified_date }}</div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-8">
+                            <a href="{% url 'eiscredential:update' eiscredential.pk %}" class="btn btn-primary btn-sm mr-2" title="Edit">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

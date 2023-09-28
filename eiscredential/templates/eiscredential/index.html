@@ -16,48 +16,95 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
     </div>
+    <div class="row">
+        <div class="col-xl-8 col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">EIS Credentials</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row mt-4 mb-4">
+                        <div class="col-xl-2 col-md-2">
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 bg-gradient-custom-blue">
-            <h6 class="m-0 font-weight-bold text-white">EIS Credential</h6>
+                        </div>
+                        <div class="col-xl-4 col-md-4 ">
+                            <div class="card shadow h-100 py-2 hover-float">
+                                <a href="{% url 'eiscredential:detail' %}?_=sandbox" style="text-decoration: none; color: inherit; outline: none;" title="Edit Sandbox Credentials">
+                                    <div class="card-body">
+                                        <div class="no-gutters text-center">
+                                            <i class="fas fa-circle text-gray"></i> 
+                                            <div class="h5 font-weight-bold text-gray-800">Sandbox API (Test)</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-md-4">
+                            <div class="card shadow h-100 py-2 hover-float">
+                                <a href="{% url 'eiscredential:detail' %}?_=live" style="text-decoration: none; color: inherit; outline: none;" title="Edit Production Credentials">
+                                    <div class="card-body">
+                                        <div class="no-gutters text-center">
+                                            <i class="fas fa-circle text-success"></i> 
+                                            <div class="h5 font-weight-bold text-gray-800">Live API</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-md-2">
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
         </div>
-        <div class="card-body text-center">
-            <label class="form-label m-4">Select Credential Mode:</label>
-            <div class="row">
-                <div class="col-xl-3 col-md-3">
-
+        <div class="col-xl-4 col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">EIS System Configuration Mode</h6>
                 </div>
-                <div class="col-xl-3 col-md-3 mb-4">
-                    <div class="card shadow h-100 py-2 hover-float">
-                        <a href="{% url 'eiscredential:detail' %}?m=u" style="text-decoration: none; color: inherit; outline: none;">
-                            <div class="card-body">
-                                <div class="no-gutters text-center">
-                                    <div class="h5 font-weight-bold text-gray-800">UAT</div>
-                                    <i class="fas fa-circle text-gray"></i>
-                                    <div class="text-gray-800">(Sandbox)</div>
-                                </div>
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mt-4">
+                        <form action="{% url 'eiscredential:savesetting' %}" method="POST" id="system_mode_form">
+                            <div class="custom-switch">
+                                {% csrf_token %}
+                                <input type="hidden" name="mode" id="mode" value="{{ credentials.config_eis_system_mode }}">
+                                <br>
+                                <input type="checkbox" class="custom-control-input" name="system_mode" id="system_mode" {% if credentials.config_eis_system_mode == 'Live' %} checked {% endif %}>
+                                <label class="custom-control-label" for="system_mode">Live</label>
+                                <hr>
+                                <p>Enabling <strong>"Live Mode"</strong> puts the system into operational state and activates real-time processes.
+                                    In <strong>"Sandbox Mode"</strong> (disabled or test state), you can test new features within a controlled environment before implementing them to live.
+                                </p>
+                                
                             </div>
-                        </a>
+                        </form>
                     </div>
-                </div>
-                <div class="col-xl-3 col-md-3 mb-4">
-                    <div class="card shadow h-100 py-2 hover-float">
-                        <a href="{% url 'eiscredential:detail' %}?m=p" style="text-decoration: none; color: inherit; outline: none;">
-                            <div class="card-body">
-                                <div class="no-gutters text-center">
-                                    <div class="h5 font-weight-bold text-gray-800">Production</div>
-                                    <i class="fas fa-circle text-success"></i>
-                                    <div class="text-gray-800">(Live)</div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-3">
-
+                    {% if perms.setting.change_setting %}
+                        <div class="text-center mt-4 mb-4">
+                            <button type="submit" id="save" class="btn btn-sm btn-primary" title="Set configuration mode" disabled>Save Mode Selection</button>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            $('#system_mode').change(function () {
+                $('#save').prop('disabled', false);
+            });
+
+            $('#save').click(function(){
+                const system_mode = $('#system_mode').prop('checked');
+                var mode = system_mode ? "LIVE" : "SANDBOX";
+                $('#mode').val(mode);
+                if(confirm("Set EIS System Configuration Mode to "+mode+"?")){
+                    $('form#system_mode_form').submit();
+                }   
+            });
+        });
+    </script>
 {% endblock %}

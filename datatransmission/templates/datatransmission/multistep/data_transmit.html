@@ -2,9 +2,36 @@
 {% load humanize %}
 {% block title %} Data Transmission {% endblock %}
 {% block content %}
+<style>
+    .console-box{
+        font-family: monospace;
+        color: #f0f0f0;
+        background-color: #333; 
+        height: 400px; 
+        width: 100%;
+        overflow-y: scroll;
+    }
+    #cursor {
+        animation: blink 0.7s infinite;
+        transform: rotate(90deg);
+    }
+    .start-0 {
+        height: 40px; /* Adjust the height as needed */
+    }
+    #progress_text, .continue-button {
+        display: none;
+    }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+</style>
 
 <section class="multi_step_form"> 
     <div id="msform"> 
+        <div class="ml-auto text-left">
+            <div>{% if setting.config_eis_system_mode == 'Live' %} <span><i class="fas fa-circle text-success"></i> Live</span> {% elif setting.config_eis_system_mode == 'Sandbox' %} <span><i class="fas fa-circle text-gray"></i> Sandbox (Test)</span> {% endif %}</div>
+        </div>
         <!-- Tittle -->
         <div class="tittle">
             <h2>Transmission Process 
@@ -20,20 +47,163 @@
             <li class="active">Transmit</li> 
             <li>Inquiry Result</li>
         </ul>
+
         <!-- fieldsets -->
         <fieldset>
-            <h3>EIS Linkage</h3>
-            <h6>Transmit data to BIR EIS</h6> 
+            <h3>Invoice Issuance</h3>
+            <h6>Send the invoices to BIR EIS</h6>
+            <div class="start-0">
+                <button class="btn btn-success" id="start">Start</button>
+                <span class="text-left" id="progress_text"></span>
+            </div>
 
-            {% for item in queryset %}
-                <pre><code>{{ item }}</code></pre>
-            {% endfor %}
+            <div class="row mt-2 mb-4">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <div  id="progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-gradient-custom-blue" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="console-box shadow-sm text-left">
+                            <pre class="text-white"></pre>
+                            <span id="cursor">█</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            
+            <input type="hidden" value="{{ queryset }}" id="data" >
 
-            <!-- <a href="{% url 'datatransmission:index' %}" class="action-button previous_button">Back</a>
-            <button type="submit" class="next action-button" disabled="True">Continue</button>  -->
+            <div class="mb-4 continue-button">
+                <button type="button" class="next action-button">Continue</button> 
+            </div>
                 
         </fieldset>
           
     </div>  
 </section> 
+
+<script>
+    $(function() {
+        let processedCount = 0;
+        $('#start').click(function(){
+            // $(this).css('visibility', 'hidden');
+            $(this).hide();
+            $("#progress_text").show();
+            $('#progress').show();
+            $('.console-box pre').html('');
+            $('.console-box pre').html('Requesting authentication token...<br>');
+            
+            authenticate();
+        });
+
+        function updateProgressBar(progress) {
+            $("#progress_bar").width(`${progress}%`);
+            $('#progress_text').text(`${parseInt(progress, 10)}%`);
+        }
+
+        function processItemAsync(item) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "{% url 'datatransmission:send' %}",
+                    type: "POST",
+                    data: {
+                        invoice_number: item.company_invoice_number,
+                        id: item.pk,
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(response) {
+                        if (response.status = "success"){
+                            $('.console-box pre').append(response.message+"<br>");
+                        } else if(response.status = "failed") {
+                            $('.console-box pre').append("<span class='text-danger'>"+response.message+"</span><br>");
+                        }
+                        resolve();
+                    },
+                    error: function(xhr, status, error) {
+                        $('.console-box pre').append("<span class='text-danger'>Error for invoice no.: "+item.company_invoice_number+". Status: "+status+". Error: "+error+"</span><br>");
+                        reject(error);
+                    }
+                });
+            });
+        }
+
+        function processItemsSequentially(items) {
+            
+            const itemQueue = [...items];
+            const totalItems = itemQueue.length;
+
+            function processNextItem() {
+                if (itemQueue.length === 0) {
+                    $('.console-box pre').append("<span class='text-success'>--End of transmission--</span><br>");
+                    $('.continue-button').css("display", "block");
+                    return Promise.resolve();
+                }
+
+                const item = itemQueue.shift();
+                $('.console-box pre').append("Sending invoice no.: "+item.company_invoice_number+"<br>");
+
+                return processItemAsync(item).then(() => {
+                    processedCount++;
+                    const progress = (processedCount / totalItems) * 100;
+                    updateProgressBar(progress);
+                    return processNextItem(); // Recursively process the next item
+                });
+            }
+
+            return processNextItem();
+        }
+
+        function authenticate(){
+            $.ajax({
+                url: "{% url 'datatransmission:authentication' %}",
+                type: "get",
+                dataType: "json",
+                data: {
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    if(response.status == 'success'){
+                        $('.console-box pre').append(response.message+"<br>");
+                        updateCursorVisibility("show");
+
+                        var data = $('#data').val();
+                        var data_array = JSON.parse(data);
+
+                        processItemsSequentially(data_array)
+                        .then(() => {
+                            updateCursorVisibility("hide");
+                        })
+                        .catch((error) => {
+                            $('.console-box pre').append("<span class='text-danger'>"+error+"</span><br>");
+                        });
+                    } else{
+                        $('.console-box pre').append("<span class='text-danger'>"+response.message+"</span><br>");
+                        updateCursorVisibility("hide");
+                    }
+                }
+            });
+        }
+
+        const $consoleDiv = $(".console-box");
+        const $consoleOutput = $consoleDiv.find("pre");
+        const $cursor = $("#cursor");
+
+        function updateCursorVisibility(toggle) {
+            if ($consoleDiv.scrollTop() + $consoleDiv.innerHeight() < $consoleDiv[0].scrollHeight) {
+                $consoleDiv.scrollTop($consoleDiv[0].scrollHeight);
+                $cursor.css("display", "inline");
+            }
+            if (toggle === "hide")  {
+                $cursor.css("display", "none");
+            }
+        }
+        // $consoleDiv.on("scroll", updateCursorVisibility);
+    });
+</script>
 {% endblock %}

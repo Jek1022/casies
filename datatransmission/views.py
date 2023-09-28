@@ -1,5 +1,6 @@
 import hmac
 import json
+import time
 import base64
 import hashlib
 import requests
@@ -15,8 +16,10 @@ from collections import defaultdict
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.db.models import Sum, F, ExpressionWrapper, DateField, When, Case, Value, IntegerField, Q
 from cas.models import Cas
+from eiscredential.models import Setting
 from .models import DataTransmissionModel
 from .helpers import DataValidator, DecimalEncoder
+from .api_authentication import Authentication
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -29,13 +32,15 @@ class IndexView(ListView):
 def initiate(request):
     is_authenticated = authenticate()
     if is_authenticated:
-        cas_types = get_cas_type
-        document_types = get_document_type
+        cas_types = get_cas_type()
+        document_types = get_document_type()
+        setting = get_setting()
         
         context = {
             'initiated': True,
             'cas_types': cas_types,
             'document_types': document_types,
+            'setting': setting
         }
         return render(request, 'datatransmission/multistep/data_retrieval.html', context)
     
@@ -104,6 +109,7 @@ class DataRetrieval(ListView):
                     'validated_invoices': validated_invoices,
                     'cas_types': cas_types,
                     'document_types': document_types,
+                    'setting': get_setting,
                     'totals': totals,
                     'form_fields': {
                         'issue_date_from': issue_date_from,
@@ -119,37 +125,70 @@ class DataRetrieval(ListView):
 
 class DataTransmit(View):
     template_name = 'datatransmission/multistep/data_transmit.html'
-    
+
     def post(self, request):
-        raw_ids = request.POST.get('json_data', None)
+        invoices = request.POST.get('json_data', None)
 
-        if raw_ids:
+        if invoices:
+            context = self.ready(request, invoices)
+            return render(request, self.template_name, context)
+        else:
             try:
-                json_datalist = []
-                queryset_ids = json.loads(raw_ids)
+                invoice_id = request.POST.get('id', None),
+                invoice_no = request.POST.get('invoice_number', None)
                 
-                queryset = Cas.objects.filter(pk__in=queryset_ids).values('pk', 'company_invoice_number').order_by('pk')
-                querylist = list(queryset)
-                grouped_list = defaultdict(list)
-                # group pk by invoice number
-                for item in querylist:
-                    grouped_list[
-                        item['company_invoice_number']
-                    ].append(
-                        item['pk']
-                    )
-                    
-                for invoice_number, pks in grouped_list.items():
-                    cas = Cas.objects.get(pk=pks[0]).to_json_format(pks)
-                    # the actual api process here (?)
-                    json_datalist.append(json.dumps(cas, cls=DecimalEncoder))
-
-                return render(request, self.template_name, {'queryset': json_datalist})
+                if invoice_id is not None and invoice_no is not None:
+                    response = self.send(invoice_id, invoice_no)
+                    return JsonResponse(response)
+                else:
+                    return render(request, self.template_name)
             except Exception as e:
-                error_message = f"Error: {str(e)}"
-                return JsonResponse({'error': error_message})
+                return HttpResponse(f"Invalid request: {e}", status=400)
+    
+    def ready(self, request, invoices):
+        try:
+            queryset_ids = json.loads(invoices)
             
-        return render(request, self.template_name)
+            queryset = Cas.objects.filter(pk__in=queryset_ids, item_id=1).values('pk', 'company_invoice_number').order_by('pk')
+            querylist = list(queryset)
+            grouped_list = defaultdict(list)
+            # group pk by invoice number
+            for item in querylist:
+                grouped_list[
+                    item['company_invoice_number']
+                ].append(
+                    item['pk']
+                )
+            # json_datalist = []
+            # for invoice_number, pks in grouped_list.items():
+            #     cas = Cas.objects.get(pk=pks[0]).to_json_format(pks)
+            #     json_datalist.append(json.dumps(cas, cls=DecimalEncoder))
+            
+            context = {
+                'setting': get_setting,
+                'queryset': json.dumps(querylist)
+            }
+            return context
+        except Exception as e:
+            return {
+                "status": "failed",
+                "message": f"Error: {str(e)}"
+            }
+        
+    def send(self, invoice_id, invoice_no):
+        time.sleep(1)
+        if invoice_no is not None and invoice_id is not None:
+            response = {
+                'status': 'success',
+                'message': f"<span class='text-primary'>Done invoice no. {invoice_no}</span>"
+            }
+        else:
+            response = {
+                'status': 'failed',
+                'message': f'Failed sending invoice no. {invoice_no}'
+            }
+
+        return response
     
 
 def get_cas_type():
@@ -183,3 +222,5 @@ def format_date(start_date, end_date):
         return None, None
 
         
+def get_setting():
+    return  Setting.objects.first()
