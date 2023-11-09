@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-at0lkp6bat4b_)o0nj#u2(9)4y^&x(u=hk3*5ief5qo0fx_360'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -45,6 +46,9 @@ INSTALLED_APPS = [
     'cas',
     'datatransmission',
     'eiscredential',
+    'castype',
+    'documenttype',
+    'overviewpanel',
 ]
 
 MIDDLEWARE = [
@@ -87,11 +91,11 @@ WSGI_APPLICATION = 'sdts.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_sdts',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', cast=int),
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB',
             'sql_mode': 'STRICT_TRANS_TABLES',

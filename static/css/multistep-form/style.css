@@ -95,6 +95,7 @@
 .multi_step_form #msform #progressbar {
   margin-bottom: 20px;
   overflow: hidden;
+  padding: 0;
 }
 .multi_step_form #msform #progressbar li {
   list-style-type: none;

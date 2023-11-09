@@ -94,11 +94,12 @@ class DeleteView(DeleteView):
             raise Http404
         return super(DeleteView, self).dispatch(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.modified_by = self.request.user
         self.object.modified_date = datetime.datetime.now()
         self.object.is_deleted = 1
         self.object.status = 'I'
         self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
         

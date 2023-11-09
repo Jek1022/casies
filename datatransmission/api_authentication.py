@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from requests.exceptions import ConnectionError, ConnectTimeout
 from eiscredential.models import EisCredential, Setting
 from .models import TokenModel
-
+from .helpers import readable_datetime
 
 def unpad(s):
     ''' Unpad for AES decryption '''
@@ -31,8 +31,8 @@ def generate_key(length=32):
 class Authentication(View):
     def __init__(self):
         super().__init__()
-        system_mode = Setting.objects.get(pk=1).config_eis_system_mode
-        credential = EisCredential.objects.get(access_level=system_mode)
+        system_mode = Setting.load().config_eis_system_mode
+        credential = EisCredential.load(system_mode)
 
         self.public_key = credential.public_key
         self.user_id = credential.user_id
@@ -45,11 +45,41 @@ class Authentication(View):
         self.force_refresh_token = credential.force_refresh_token
 
     def get(self, request):
-        response = self.send(request)
+        response = self.check_token_expiry(request)
         return JsonResponse(response)
 
+    def check_token_expiry(self, request):
+        ''' Calculate the time difference (30mins) between the expiry time and the current time '''
+        try:
+            token_instance = TokenModel.load()
+            token_expiry = token_instance.token_expiry
+            auth_token = token_instance.auth_token
+            session_key = token_instance.session_key
+
+            if token_expiry and auth_token and session_key:
+                expiry_timestamp = datetime.strptime(token_expiry, "%Y-%m-%dT%H:%M:%S")
+
+                current_time = datetime.now()
+                time_difference = expiry_timestamp - current_time
+                expiration_threshold = timedelta(minutes=30)
+                if time_difference <= expiration_threshold:
+                    response = self.send(request)
+                else:
+                    valid_until_datetime = readable_datetime(token_expiry)
+                    response = {
+                        "status": "success",
+                        "message": f"Token is still valid.<br>Token validity: Expires on {valid_until_datetime}"
+                    }
+            else:
+                response = self.send(request)
+        except Exception as e:
+            print(e)
+            response = self.send(request)
+
+        return response
+
     def send(self, request):
-        response = ''
+        response = {}
         try:
             # Set Request URL
             url = self.authentication_url
@@ -129,11 +159,10 @@ class Authentication(View):
                 # print("SESSION KEY : " + session_key)
                 # print("TOKEN EXPIRY : " + token_expiry)
 
-                date_time_obj = datetime.fromisoformat(token_expiry)
-                readable_date_time = date_time_obj.strftime("%B %d, %Y, %I:%M:%S %p")
+                valid_until_datetime = readable_datetime(token_expiry)
                 response = {
                     "status": "success",
-                    "message": f"Authentication token acquired. Valid until {readable_date_time}."
+                    "message": f"New authentication token acquired.<br>Token validity: Expires on {valid_until_datetime}."
                 }
                 
                 return response

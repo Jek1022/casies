@@ -11,11 +11,13 @@
         width: 100%;
         overflow-y: scroll;
     }
+    .console-box pre{
+        overflow: hidden;
+    }
     #cursor {
         animation: blink 0.7s infinite;
-        transform: rotate(90deg);
     }
-    .start-0 {
+    .begin_transmission-0 {
         height: 40px; /* Adjust the height as needed */
     }
     #progress_text, .continue-button {
@@ -52,35 +54,41 @@
         <fieldset>
             <h3>Invoice Issuance</h3>
             <h6>Send the invoices to BIR EIS</h6>
-            <div class="start-0">
-                <button class="btn btn-success" id="start">Start</button>
-                <span class="text-left" id="progress_text"></span>
+            
+            <div class="begin_transmission-0">
+                <button class="btn btn-facebook" id="begin_transmission" title="Transmit!">Begin Transmission</button>
+                
+                <span class="text-left" id="progress_text">Transmission in progress...</span>
             </div>
 
             <div class="row mt-2 mb-4">
                 <div class="col-md-2"></div>
+
                 <div class="col-md-8">
-                    <div class="mb-4">
+                    <div class="mb-4 mt-4">
                         <div  id="progress">
                             <div class="progress">
-                                <div class="progress-bar bg-gradient-custom-blue" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar progress-bar-striped bg-primary progress-bar-animated" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span id="percentage"></span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="console-box shadow-sm text-left">
+                    <div class="row shadow-sm">
+                        <div class="console-box shadow border text-left">
                             <pre class="text-white"></pre>
                             <span id="cursor">█</span>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-2"></div>
             </div>
-            
-            <input type="hidden" value="{{ queryset }}" id="data" >
+            <form action="{% url 'datatransmission:inquireinvoice' %}" method="POST" id="forInquiryForm">
+                {% csrf_token %}
+                <input type="hidden" value="{{ items }}" id="data" name="transmitted_invoices" >
+            </form>
 
             <div class="mb-4 continue-button">
-                <button type="button" class="next action-button">Continue</button> 
+                <button type="button" class="next action-button" id="continue">Continue&nbsp; <i class="fas fa-long-arrow-alt-right"></i></button> 
             </div>
                 
         </fieldset>
@@ -91,20 +99,25 @@
 <script>
     $(function() {
         let processedCount = 0;
-        $('#start').click(function(){
+        $('#begin_transmission').click(function(){
             // $(this).css('visibility', 'hidden');
             $(this).hide();
             $("#progress_text").show();
             $('#progress').show();
             $('.console-box pre').html('');
-            $('.console-box pre').html('Requesting authentication token...<br>');
+            $('.console-box pre').html('Checking authentication token...<br>');
             
             authenticate();
         });
 
-        function updateProgressBar(progress) {
+        function updateProgressBar(progress, processedCount, totalItems) {
             $("#progress_bar").width(`${progress}%`);
-            $('#progress_text').text(`${parseInt(progress, 10)}%`);
+            $('#percentage').text(`${progress.toFixed(2)}% or ${processedCount} out of ${totalItems} invoice`);
+            if(progress === 100){
+                $('#progress_bar').addClass('bg-success').removeClass('bg-primary');
+                $('#progress_text').text('Transmission completed!');
+            }
+            // $('#progress_text').text(`${parseInt(progress, 10)}%`);
         }
 
         function processItemAsync(item) {
@@ -112,11 +125,14 @@
                 $.ajax({
                     url: "{% url 'datatransmission:send' %}",
                     type: "POST",
-                    data: {
-                        invoice_number: item.company_invoice_number,
-                        id: item.pk,
-                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
                     },
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        invoice_number: item.company_invoice_number,
+                        invoice_ids: item.pk,
+                    }),
                     success: function(response) {
                         if (response.status = "success"){
                             $('.console-box pre').append(response.message+"<br>");
@@ -126,8 +142,9 @@
                         resolve();
                     },
                     error: function(xhr, status, error) {
-                        $('.console-box pre').append("<span class='text-danger'>Error for invoice no.: "+item.company_invoice_number+". Status: "+status+". Error: "+error+"</span><br>");
+                        $('.console-box pre').append("<span class='text-danger'>Error invoice no.: "+item.company_invoice_number+". Status: "+status+". Message: "+xhr.responseText+"</span><br>");
                         reject(error);
+                        updateCursorVisibility("hide");
                     }
                 });
             });
@@ -151,7 +168,7 @@
                 return processItemAsync(item).then(() => {
                     processedCount++;
                     const progress = (processedCount / totalItems) * 100;
-                    updateProgressBar(progress);
+                    updateProgressBar(progress, processedCount, totalItems);
                     return processNextItem(); // Recursively process the next item
                 });
             }
@@ -204,6 +221,10 @@
             }
         }
         // $consoleDiv.on("scroll", updateCursorVisibility);
+
+        $('#continue').click(function(){
+            $('#forInquiryForm').submit();
+        })
     });
 </script>
 {% endblock %}

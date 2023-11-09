@@ -5,12 +5,12 @@ Chart.defaults.global.defaultFontColor = '#858796';
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
-  type: 'polarArea',
+  type: chart_type,
   data: {
-    labels: ["Success", "Failed", "Processing"],
+    labels: ["Success", "Failed", "Processing", "Active"],
     datasets: [{
-      data: [80, 5, 15],
-      backgroundColor: ['#1cc88a', '#e74a3b', '#36b9cc'],
+      data: pie_data,
+      backgroundColor: ['#1cc88a', '#e74a3b', '#36b9cc', '#eaecf4'],
       hoverBackgroundColor: ['#149164', '#c52a1b', '#2c9faf'],
       hoverBorderColor: "rgba(234, 236, 244, 1)",
     }],

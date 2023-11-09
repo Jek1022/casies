@@ -1,0 +1,219 @@
+{% extends 'base-layout-datatransmission.html' %}
+{% load humanize %}
+{% block title %} Data Transmission {% endblock %}
+{% block content %}
+<style>
+    .console-box{
+        font-family: monospace;
+        color: #f0f0f0;
+        background-color: #333; 
+        height: 400px; 
+        width: 100%;
+        overflow-y: scroll;
+    }
+    .console-box pre{
+        overflow: hidden;
+    }
+    #cursor {
+        animation: blink 0.7s infinite;
+    }
+    #progress_text, .exit-button {
+        display: none;
+    }
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+</style>
+<section class="multi_step_form"> 
+    <div id="msform">
+        
+        <div class="ml-auto text-left">
+            <div>{% if setting.config_eis_system_mode == 'Live' %} <span><i class="fas fa-circle text-success"></i> Live</span> {% elif setting.config_eis_system_mode == 'Sandbox' %} <span><i class="fas fa-circle text-gray"></i> Sandbox (Test)</span> {% endif %}</div>
+        </div>
+        <!-- Tittle -->
+        <div class="tittle">
+            <h2>Transmission Process 
+                <span class="icon-with-tooltip " data-toggle="tooltip" data-placement="top" title="In order to transmit data, you have to complete this transmission process.">
+                    <i class="fas fa-info-circle fa-xs"></i>
+                </span>
+            </h2>
+            <p></p>
+        </div>
+        <!-- progressbar -->
+        <ul id="progressbar">
+            <li class="done">Data Retrieval</li>  
+            <li class="done">Transmit</li> 
+            <li class="active">Inquiry Result</li>
+        </ul>
+
+        <!-- fieldsets -->
+        <fieldset>
+            <h3>Inquiry Result</h3>
+            <h6>Verify the transmission status from BIR EIS</h6>
+
+            <span id="progress_text">Inquiry result in progress...</span>
+
+            <div class="row mt-2 mb-4">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-8">
+                    <div class="mb-4 mt-4">
+                        <div  id="progress">
+                            <div class="progress" style="height: 18px;">
+                                <div class="progress-bar progress-bar-striped bg-primary progress-bar-animated" id="progress_bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><span id="percentage"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row shadow-sm">
+                        <div class="console-box shadow border text-left">
+                            <pre class="text-white"></pre>
+                            <span id="cursor">█</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2"></div>
+            </div>
+            <input type="hidden" value="{{ transmitted_invoices }}" id="data">
+
+            <div class="mb-4 exit-button">
+                <a href="{% url 'overview-panel' %}" class="btn btn-outline-primary" id="exit" title="Exit">Exit & Return to Home Screen&nbsp; <i class="fas fa-sign-out-alt"></i></a> 
+            </div>
+                
+        </fieldset>
+          
+    </div>  
+</section>
+<script>
+    $(function() {
+        let processedCount = 0;
+        
+        function start(){
+            $("#progress_text").show();
+            $('#progress').show();
+            $('.console-box pre').html('');
+            $('.console-box pre').html('Checking authentication token...<br>');
+            
+            authenticate();
+        }
+
+        function updateProgressBar(progress, processedCount, totalItems) {
+            $("#progress_bar").width(`${progress}%`);
+            $('#percentage').text(`${progress.toFixed(2)}% or ${processedCount} out of ${totalItems} invoice`);
+            if(progress === 100){
+                $('#progress_bar').addClass('bg-success').removeClass('bg-primary');
+                $('#progress_text').text('Transmission process completed!');
+            }
+            // $('#progress_text').text(`${parseInt(progress, 10)}%`);
+        }
+
+        function processItemAsync(item) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "{% url 'datatransmission:inquireinvoice' %}",
+                    type: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        invoice_number: item.company_invoice_number,
+                        invoice_ids: item.pk,
+                    }),
+                    success: function(response, status, xhr) {
+                        if (response.status = "success"){
+                            $('.console-box pre').append(response.message+"<br>");
+                        } else if(response.status = "failed") {
+                            $('.console-box pre').append("<span class='text-danger'>"+response.message+"</span><br>");
+                        } else if (xhr.status != 200) {
+                            $('.console-box pre').append("<span class='text-danger'>An error occured while processing your request. Status: "+xhr.statusText+"</span><br>");
+                            reject(xhr.responseText);
+                            updateCursorVisibility("hide");
+                        }
+                        resolve();
+                    },
+                    error: function(xhr, status, error) {
+                        $('.console-box pre').append("<span class='text-danger'>Error invoice no.: "+item.company_invoice_number+". Status: "+status+". Message: "+xhr.responseText+"</span><br>");
+                        reject(error);
+                        updateCursorVisibility("hide");
+                    }
+                });
+            });
+        }
+
+        function processItemsSequentially(items) {
+            
+            const itemQueue = [...items];
+            const totalItems = itemQueue.length;
+
+            function processNextItem() {
+                if (itemQueue.length === 0) {
+                    $('.console-box pre').append("<span class='text-success'>--Result inquiry completed--</span><br>");
+                    $('.exit-button').css("display", "block");
+                    return Promise.resolve();
+                }
+
+                const item = itemQueue.shift();
+                $('.console-box pre').append("Requesting status of invoice no.: "+item.company_invoice_number+"<br>");
+
+                return processItemAsync(item).then(() => {
+                    processedCount++;
+                    const progress = (processedCount / totalItems) * 100;
+                    updateProgressBar(progress, processedCount, totalItems);
+                    return processNextItem(); // Recursively process the next item
+                });
+            }
+
+            return processNextItem();
+        }
+
+        function authenticate(){
+            $.ajax({
+                url: "{% url 'datatransmission:authentication' %}",
+                type: "get",
+                dataType: "json",
+                data: {
+                    'csrfmiddlewaretoken': "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    if(response.status == 'success'){
+                        $('.console-box pre').append(response.message+"<br>");
+                        updateCursorVisibility("show");
+
+                        var data = $('#data').val();
+                        var data_array = JSON.parse(data);
+
+                        processItemsSequentially(data_array)
+                        .then(() => {
+                            updateCursorVisibility("hide");
+                        })
+                        .catch((error) => {
+                            $('.console-box pre').append("<span class='text-danger'>"+error+"</span><br>");
+                        });
+                    } else{
+                        $('.console-box pre').append("<span class='text-danger'>"+response.message+"</span><br>");
+                        updateCursorVisibility("hide");
+                    }
+                }
+            });
+        }
+
+        const $consoleDiv = $(".console-box");
+        const $consoleOutput = $consoleDiv.find("pre");
+        const $cursor = $("#cursor");
+
+        function updateCursorVisibility(toggle) {
+            if ($consoleDiv.scrollTop() + $consoleDiv.innerHeight() < $consoleDiv[0].scrollHeight) {
+                $consoleDiv.scrollTop($consoleDiv[0].scrollHeight);
+                $cursor.css("display", "inline");
+            }
+            if (toggle === "hide")  {
+                $cursor.css("display", "none");
+            }
+        }
+        
+        start();
+    });
+</script>
+{% endblock %}

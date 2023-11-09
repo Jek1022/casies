@@ -26,6 +26,7 @@ admin.site.site_header = 'SDTS Administration'
 
 urlpatterns = [
     re_path(r'^$', login_required(TemplateView.as_view(template_name='dashboard/index.html')), name='overview-panel'),
+    re_path(r'^overviewpanel/', include('overviewpanel.urls', namespace='overviewpanel')),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^accounts/', include('django.contrib.auth.urls')),
 
@@ -34,5 +35,7 @@ urlpatterns = [
     re_path(r'^datatransmission/', include('datatransmission.urls', namespace='datatransmission')),
     re_path(r'^maintenance/mainmodule/', include('mainmodule.urls', namespace='mainmodule')),
     re_path(r'^maintenance/company/', include('company.urls', namespace='company')),
+    re_path(r'^maintenance/castype/', include('castype.urls', namespace='castype')),
+    re_path(r'^maintenance/documenttype/', include('documenttype.urls', namespace='documenttype')),
     re_path(r'^maintenance/eiscredential/', include('eiscredential.urls', namespace='eiscredential')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

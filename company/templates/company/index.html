@@ -45,16 +45,16 @@
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a href="{% url 'company:update' company.pk %}" class="dropdown-item btn-edit">
-                                                    <i class="fas fa-pencil-alt"></i>&nbsp;&nbsp;Edit
+                                                    <i class="fas fa-pencil-alt text-primary"></i>&nbsp;&nbsp;Edit
                                                 </a>
                                                 <a href="{% url 'company:delete' company.pk %}" class="dropdown-item btn-delete">
-                                                    <i class="fas fa-trash"></i>&nbsp;&nbsp;Delete
+                                                    <i class="fas fa-trash text-danger"></i>&nbsp;&nbsp;Delete
                                                 </a>
                                             </div>
                                         </div>
                                     
                                         <a href="{% url 'company:detail' company.pk %}" title="View">
-                                            <i class="fas fa-info-circle"></i>
+                                            <i class="fas fa-th-list"></i>
                                         </a>
                                         
                                     </div>

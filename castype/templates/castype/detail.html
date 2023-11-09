@@ -1,0 +1,67 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | CAS Type {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">CAS Type Details</h6>
+                </div>
+                <div class="card-body">
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Code:</div>
+                        <div class="col-md-8"><span class="font-weight-bold">{{ castype.code }}</span></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Description:</div>
+                        <div class="col-md-8"><span class="font-weight-bold">{{ castype.description }}</span></div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-4 text-primary">Status:</div>
+                        <div class="col-md-8">{{ castype.get_status_display }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-gradient-custom-blue">
+                    <h6 class="m-0 font-weight-bold text-white">Activity Log</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified By:</div>
+                        <div class="col-sm-8">{{ castype.modified_by }}</div>
+                    </div>
+                
+                    <div class="form-group row mb-1">
+                        <div class="col-sm-4 text-primary">Modified Date:</div>
+                        <div class="col-sm-8">{{ castype.modified_date }}</div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-8">
+                            <a href="{% url 'castype:update' castype.pk %}" class="btn btn-primary btn-sm mr-2" title="Edit">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            <a href="{% url 'castype:delete' castype.pk %}" class="btn btn-danger btn-sm" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

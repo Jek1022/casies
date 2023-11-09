@@ -26,7 +26,13 @@
         <fieldset>
             <h3>Retrieve Data from CAS</h3>
             <h6>Review and verify the data before initiating the transmission...</h6> 
-
+            <div class="text-right">
+                {% if queryset|length > 1 %}
+                    <span><i>{{ queryset|length }} items / {{ invoice_count }} invoice</i></span>
+                {% else %}
+                    <span><i>{{ queryset|length }} item / {{ invoice_count }} invoice</i></span>
+                {% endif %}
+            </div>
             <div class="shadow-sm border mb-md-5">
                 <div class="col-md-12">
                     <form method="POST" action="{% url 'datatransmission:dataretrieval' %}">
@@ -300,7 +306,7 @@
                             {% csrf_token %}
                             <input type="hidden" name="json_data" id="json_data" value="{{ json_data }}"/>
                         </form>
-                        <button type="button" class="next action-button" data-toggle="modal" data-target="#confirmModal" title="Continue">Continue&nbsp; <i class="fas fa-long-arrow-alt-right"></i></button> 
+                        <button type="button" class="next action-button" data-toggle="modal" data-target="#confirmModal" title="Continue">Continue&nbsp;&nbsp;<i class="fas fa-long-arrow-alt-right"></i></button> 
                     </div>
                 {% endif %}
             </div>

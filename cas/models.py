@@ -92,7 +92,7 @@ class Cas(models.Model):
         ('02', 'Circulation'),
     )
     cas_type = models.CharField(max_length=2, choices=CAS_TYPE_CHOICES, verbose_name='CAS Type - Advertising/Circulation')
-    item_id = models.IntegerField(verbose_name='Transaction item ID or primary key')
+    item_id = models.IntegerField(verbose_name='Transaction item ID no.')
     STATUS_CHOICES = (
         ('A', 'Active'),
         ('I', 'Inactive'),
@@ -101,6 +101,7 @@ class Cas(models.Model):
         ('P', 'Printed'),
     )
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='A')
+    submit_id = models.CharField(max_length=255, null=True, blank=True, default='')
     entered_by = models.IntegerField(default=1)
     entered_date = models.DateTimeField(auto_now_add=True)
     modified_by = models.IntegerField(default=1)
@@ -223,3 +224,8 @@ class Cas(models.Model):
         }
 
         return json_data
+    
+    @classmethod
+    def load(cls, invoice_id):
+        obj = cls.objects.get(pk=invoice_id)
+        return obj

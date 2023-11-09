@@ -1,4 +1,9 @@
 {% load static %}
+<style>
+    .bg-successful {
+        background-color: silver;
+    }
+</style>
 <div class="row">
 
     <!-- Content Column -->
@@ -7,37 +12,37 @@
         <!-- Project Card Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3 bg-gradient-custom-blue">
-                <h6 class="m-0 font-weight-bold text-white">Data Transfer Rate</h6>
+                <h6 class="m-0 font-weight-bold text-white">Success Transfer Rate</h6>
             </div>
             <div class="card-body">
                 <h4 class="small font-weight-bold">Sales Invoice <span
-                        class="float-right">0%</span></h4>
+                        class="float-right" id="si_rate">10%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div class="progress-bar bg-successful" id="si_rate_progressbar" role="progressbar" style="width: 0%"
                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Service Billing <span
-                        class="float-right">0%</span></h4>
+                        class="float-right" id="sb_rate">0%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div class="progress-bar bg-successful" id="sb_rate_progressbar" role="progressbar" style="width: 0%"
                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Official Receipt <span
-                        class="float-right">0%</span></h4>
+                        class="float-right" id="or_rate">50%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div class="progress-bar bg-successful" id="or_rate_progressbar" role="progressbar" style="width: 0%"
                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Debit Memo <span
-                        class="float-right">0%</span></h4>
+                        class="float-right" id="dm_rate">0%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div class="progress-bar bg-successful" id="dm_rate_progressbar" role="progressbar" style="width: 0%"
                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Credit Memo <span
-                        class="float-right">0%</span></h4>
+                        class="float-right" id="cm_rate">0%</span></h4>
                 <div class="progress">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 0%"
+                    <div class="progress-bar bg-successful" id="cm_rate_progressbar" role="progressbar" style="width: 0%"
                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
@@ -59,12 +64,14 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                         aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">Pie Chart Types:</div>
-                        <a class="dropdown-item" href="#">Basic Pie Chart</a>
+                        <div class="dropdown-header">Select Chart Type:</div>
+                        <a class="dropdown-item" href="#">Bar Chart</a>
                         <a class="dropdown-item" href="#">Polar Area</a>
                         <a class="dropdown-item" href="#">Doughnut Chart</a>
+                        <a class="dropdown-item" href="#">Line Chart</a>
+                        <a class="dropdown-item" href="#">Radar</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Don't show Pie Chart</a>
+                        <a class="dropdown-item" href="#">Hide</a>
                     </div>
                 </div>
             </div>
@@ -75,22 +82,19 @@
                 </div>
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Success
+                        <i class="fas fa-circle" style="color: #4caf50;"></i> Success
+                    </span>
+                    <span class="mr-2">
+                        <i class="fas fa-circle" style="color: #0056b3;"></i> Processing
                     </span>
                     <span class="mr-2">
                         <i class="fas fa-circle text-danger"></i> Failed
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> Processing
+                        <i class="fas fa-circle" style="color: #9295a7;"></i> Ready to transmit
                     </span>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Page level plugins -->
-<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
-
-<!-- Page level custom scripts -->
-<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>

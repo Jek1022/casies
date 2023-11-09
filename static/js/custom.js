@@ -1,23 +1,12 @@
 // Jquery
 $(document).ready(function() {
-    // DASHBOARD auto date range (monthly)
-    var currentDate = new Date();
-    var firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    var lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  $('.input-daterange').datepicker({
+      autoclose: true,
+      format: 'yyyy-mm-dd'
+  });
 
-    $('.input-daterange').datepicker({
-        startDate: firstDayOfMonth,
-        endDate: lastDayOfMonth,
-        autoclose: true,
-        format: 'yyyy-mm-dd'
-    });
-
-    $('[name="auto_start_date"]').datepicker('setDate', firstDayOfMonth);
-    $('[name="auto_end_date"]').datepicker('setDate', lastDayOfMonth);
-    // End DASHBOARD auto date range (monthly)
-
-    // tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+  // tooltip
+  $('[data-toggle="tooltip"]').tooltip();
     
 });
 

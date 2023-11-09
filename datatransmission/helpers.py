@@ -3,6 +3,7 @@
 import re
 import json
 import decimal
+from datetime import datetime
 
 class DataValidator:
     ''' Program driven revalidation '''
@@ -352,6 +353,9 @@ class Credential():
         self.HMAC_SHA_256 = "HmacSHA256"
         self.AUTHORIZATION_URL = "https://eis-cert.bir.gov.ph/api/authentication"
         
-
+        
+def readable_datetime(token_expiry):
+    date_time_obj = datetime.fromisoformat(token_expiry)
+    return date_time_obj.strftime("%B %d, %Y, %I:%M:%S %p")
     
     

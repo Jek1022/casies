@@ -10,6 +10,7 @@ class EisCredential(models.Model):
     application_secret_key = models.CharField(max_length=255, verbose_name='Application Secret Key')
     accreditation_id = models.CharField(max_length=255, verbose_name='Accreditation ID or EIS Cert Number')
     jws_key_id = models.CharField(max_length=255, verbose_name='JWS Key ID')
+    jws_private_key = models.CharField(max_length=20, default='', verbose_name='JWS Private Key')
     force_refresh_token = models.CharField(max_length=20, default='false', null=True, blank=True, verbose_name='Force Refresh Token')
     authentication_url = models.CharField(max_length=255, default='', verbose_name='Authentication URL')
     invoices_url = models.CharField(max_length=255, default='', verbose_name='Invoices URL')
@@ -31,6 +32,13 @@ class EisCredential(models.Model):
         db_table = 'eis_credential'
         ordering = ['-pk']
 
+    @classmethod
+    def load(cls, system_mode):
+        # Custom method to load the single instance
+        obj, created = cls.objects.get_or_create(access_level=system_mode)
+        return obj
+    
+
 class Setting(models.Model):
     CONFIG_EIS_SYSTEM_MODE_CHOICES = (
         ('Sandbox', 'UAT'),
@@ -45,3 +53,14 @@ class Setting(models.Model):
     class Meta:
         db_table = 'setting'
         ordering = ['-pk']
+
+    def save(self, *args, **kwargs):
+        # Override the save method to ensure there's only one row
+        self.id = 1
+        super(Setting, self).save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        # Custom method to load the single instance
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

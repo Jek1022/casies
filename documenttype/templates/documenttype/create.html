@@ -1,0 +1,47 @@
+{% extends 'base-layout.html' %}
+{% block title %} Maintenance | Document Type {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Maintenance</h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-gradient-custom-blue">
+                        <h6 class="m-0 font-weight-bold text-white">Create a New Document Type</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-4">
+                                        <label for="id_code" class="form-label">Code:</label>
+                                        <input type="text" name="code" class="form-control" maxlength="10" required id="id_code">
+                                        <span class="form-text text-danger">{{ form.code.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <label for="id_description" class="form-label">Description:</label>
+                                        <input type="text" name="description" class="form-control" maxlength="250" required id="id_description">
+                                        <span class="form-text text-danger">{{ form.description.errors.as_text }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

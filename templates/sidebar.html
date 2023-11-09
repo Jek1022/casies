@@ -66,8 +66,10 @@
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item {% if 'castype' in active_menu %}active{% endif %}" href="{% url 'castype:index' %}">CAS Type</a>
                 <a class="collapse-item {% if 'company' in active_menu %}active{% endif %}" href="{% url 'company:index' %}">Company</a>
                 <a class="collapse-item" href="#" onclick="showCustomAlert('Coming soon: New developments in progress.', 'warning');">Company Parameter</a>
+                <a class="collapse-item {% if 'documenttype' in active_menu %}active{% endif %}" href="{% url 'documenttype:index' %}">Document Type</a>
                 <a class="collapse-item" href="{% url 'eiscredential:index' %}">EIS Credential</a>
                 <!-- <a class="collapse-item" href="{% url 'mainmodule:index' %}">Main Module</a> -->
             </div>

@@ -16,15 +16,18 @@ from collections import defaultdict
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.db.models import Sum, F, ExpressionWrapper, DateField, When, Case, Value, IntegerField, Q
 from cas.models import Cas
+from datatransmission.api_resultinquiry import ResultInquiry
 from eiscredential.models import Setting
-from .models import DataTransmissionModel
+from castype.models import CasType
+from documenttype.models import DocumentType
+from .models import DataTransmission
 from .helpers import DataValidator, DecimalEncoder
 from .api_authentication import Authentication
+from .api_invoices import Transmit
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
 class IndexView(ListView):
-    # model = DataTransmission
     template_name = 'datatransmission/index.html'
     queryset = []
 
@@ -68,7 +71,7 @@ class DataRetrieval(ListView):
                 document_types = get_document_type
                 
                 # search in childmodel for fk relationship of parentmodel
-                queryset = Cas.objects.filter(datatransmissionmodel__isnull=True)
+                queryset = Cas.objects.filter(datatransmission_cas__isnull=True)
                 if issue_date_from and issue_date_to:
                     date_from, date_to = format_date(issue_date_from, issue_date_to)
                     if date_from and date_to:
@@ -83,7 +86,10 @@ class DataRetrieval(ListView):
                 if document_type:
                     queryset = queryset.filter(document_type=document_type)
 
-                totals = queryset.filter(item_id=1).aggregate(
+                invoices = queryset.filter(item_id=1)
+                invoice_count = invoices.count()
+
+                totals = invoices.aggregate(
                     total_net_amount_payable=Sum('net_amount_payable')
                 )
 
@@ -107,6 +113,7 @@ class DataRetrieval(ListView):
                     'json_data': json.dumps(json_data),
                     'validation_summary': validation_summary,
                     'validated_invoices': validated_invoices,
+                    'invoice_count': invoice_count,
                     'cas_types': cas_types,
                     'document_types': document_types,
                     'setting': get_setting,
@@ -125,31 +132,36 @@ class DataRetrieval(ListView):
 
 class DataTransmit(View):
     template_name = 'datatransmission/multistep/data_transmit.html'
-
+    
     def post(self, request):
         invoices = request.POST.get('json_data', None)
 
         if invoices:
+            print('diiin', invoices)
             context = self.ready(request, invoices)
             return render(request, self.template_name, context)
         else:
+            print('wray')
             try:
-                invoice_id = request.POST.get('id', None),
-                invoice_no = request.POST.get('invoice_number', None)
+                data = json.loads(request.body)
+                invoice_ids = data.get('invoice_ids', []),
+                invoice_no = data.get('invoice_number', None)
                 
-                if invoice_id is not None and invoice_no is not None:
-                    response = self.send(invoice_id, invoice_no)
+                if invoice_ids[0] and invoice_no is not None:
+                    response = self.send(request, invoice_ids[0], invoice_no)
+                    print('response', response)
                     return JsonResponse(response)
+                
                 else:
                     return render(request, self.template_name)
             except Exception as e:
-                return HttpResponse(f"Invalid request: {e}", status=400)
+                return HttpResponse(f"Invalid request, {e}.", status=400)
     
     def ready(self, request, invoices):
         try:
             queryset_ids = json.loads(invoices)
             
-            queryset = Cas.objects.filter(pk__in=queryset_ids, item_id=1).values('pk', 'company_invoice_number').order_by('pk')
+            queryset = Cas.objects.filter(pk__in=queryset_ids).values('pk', 'company_invoice_number').order_by('pk', 'item_id')
             querylist = list(queryset)
             grouped_list = defaultdict(list)
             # group pk by invoice number
@@ -159,14 +171,14 @@ class DataTransmit(View):
                 ].append(
                     item['pk']
                 )
-            # json_datalist = []
-            # for invoice_number, pks in grouped_list.items():
-            #     cas = Cas.objects.get(pk=pks[0]).to_json_format(pks)
-            #     json_datalist.append(json.dumps(cas, cls=DecimalEncoder))
-            
+
+            items = []
+            for inv, ids in grouped_list.items():
+                items.append({'company_invoice_number': inv, 'pk': ids})
+                
             context = {
                 'setting': get_setting,
-                'queryset': json.dumps(querylist)
+                'items': json.dumps(items)
             }
             return context
         except Exception as e:
@@ -175,13 +187,15 @@ class DataTransmit(View):
                 "message": f"Error: {str(e)}"
             }
         
-    def send(self, invoice_id, invoice_no):
-        time.sleep(1)
-        if invoice_no is not None and invoice_id is not None:
-            response = {
-                'status': 'success',
-                'message': f"<span class='text-primary'>Done invoice no. {invoice_no}</span>"
-            }
+    def send(self, request, invoice_ids, invoice_no):
+        # time.sleep(1)
+        if invoice_ids and invoice_no is not None:
+            
+            json_format = Cas.objects.get(pk=invoice_ids[0]).to_json_format(invoice_ids)
+            
+            response = Transmit().execute(request, invoice_no, invoice_ids, json_format)
+            # if response['status']:
+                
         else:
             response = {
                 'status': 'failed',
@@ -191,21 +205,68 @@ class DataTransmit(View):
         return response
     
 
+class InquireInvoice(View):
+    template_name = 'datatransmission/multistep/result_inquiry.html'
+    
+    def post(self, request):
+        transmitted_invoices = request.POST.get('transmitted_invoices', None)
+
+        if transmitted_invoices:
+            context = {'transmitted_invoices': transmitted_invoices}
+            return render(request, self.template_name, context)
+        else:
+            try:
+                data = json.loads(request.body)
+                invoice_ids = data.get('invoice_ids', []),
+                invoice_no = data.get('invoice_number', None)
+                
+                if invoice_ids[0] and invoice_no is not None:
+                    response = self.send(request, invoice_ids[0], invoice_no)
+                    
+                    return JsonResponse(response)
+                
+                else:
+                    return render(request, self.template_name)
+            except Exception as e:
+                return HttpResponse(f"Invalid request, {e}.", status=400)
+            
+    def send(self, request, invoice_ids, invoice_no):
+        # time.sleep(1)
+        if invoice_ids and invoice_no is not None:
+            
+            data = DataTransmission.objects.get(cas_id=invoice_ids[0])
+            submit_id = data.ref_submit_id
+            data_id = data.pk
+            response = ResultInquiry().get_status(request, submit_id, data_id, invoice_no)
+             
+        else:
+            response = {
+                'status': 'failed',
+                'message': f'Failed requesting status of invoice no. {invoice_no}'
+            }
+
+        return response
+    
+
 def get_cas_type():
-    return [
-        {'code': '01', 'description': 'iES Advertising'},
-        {'code': '02', 'description': 'Circulation System'},
-    ]
+    castype = CasType.objects.filter(is_deleted=0).values('code', 'description')
+    return castype
+    # return [
+    #     {'code': '01', 'description': 'iES Advertising'},
+    #     {'code': '02', 'description': 'Circulation System'},
+    # ]
 
 
 def get_document_type():
-    return [
-        {'code': '01', 'description': 'Sales Invoice'},
-        {'code': '02', 'description': 'Debit Memo'},
-        {'code': '03', 'description': 'Credit Memo'},
-        {'code': '04', 'description': 'Service Billing'},
-        {'code': '05', 'description': 'Official Receipt'},
-    ]
+    documenttype = DocumentType.objects.filter(is_deleted=0).values('code', 'description')
+    return documenttype
+    # return [
+    #     {'code': '01', 'description': 'Sales Invoice'},
+    #     {'code': '02', 'description': 'Debit Memo'},
+    #     {'code': '03', 'description': 'Credit Memo'},
+    #     {'code': '04', 'description': 'Service Billing'},
+    #     {'code': '05', 'description': 'Official Receipt'},
+    # ]
 
 
 def format_date(start_date, end_date):

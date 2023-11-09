@@ -37,7 +37,11 @@
                                         </div>
                                     </div>
                                 </a>
+                                {% if credentials.config_eis_system_mode == 'Sandbox' %}
+                                    <small class="text-success">Active</small>
+                                {% endif %}
                             </div>
+                            
                         </div>
                         <div class="col-xl-4 col-md-4">
                             <div class="card shadow h-100 py-2 hover-float">
@@ -49,6 +53,9 @@
                                         </div>
                                     </div>
                                 </a>
+                                {% if credentials.config_eis_system_mode == 'Live' %}
+                                    <small class="text-success">Active</small>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="col-xl-2 col-md-2">

@@ -1,3 +1,4 @@
+
 {% extends 'base-layout.html' %}
 {% load static %}
 
@@ -7,20 +8,151 @@
         <h1 class="h3 mb-0 text-gray-800">Overview Panel</h1>
         <div class="form-group">
             <div class="input-daterange input-group" id="date-range">
-                <input type="text" class="form-control" name="auto_start_date" placeholder="From" required>
+                <input type="text" class="form-control" name="auto_start_date" id="start_date" value="06/01/2023" placeholder="From" required>
                 <div class="input-group-prepend input-group-append">
-                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                    <span class="input-group-text h-34px"><i class="fas fa-calendar-alt"></i></span>
                 </div>
-                <input type="text" class="form-control" name="auto_end_date" placeholder="To" required>
+                <input type="text" class="form-control" name="auto_end_date" id="end_date" value="06/30/2023" placeholder="To" required>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">
+                    <button class="btn btn-outline-secondary h-34px" type="button" id="search">
                     <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    {% include 'dashboard/row-cards.html' %}
-    {% include 'dashboard/charts.html' %}
-    
+   
+    <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            
+            function fetchData(start_date, end_date){
+                $.ajax({
+                    url: "{% url 'overviewpanel:index' %}",
+                    type: 'GET',
+                    data: {
+                        'start_date': start_date,
+                        'end_date': end_date
+                    },
+                    success: function (data) {
+                        $('#si_count').text(data.row.si_count);
+                        $('#dmcm_count').text(data.row.dmcm_count);
+                        $('#sb_count').text(data.row.sb_count);
+                        $('#or_count').text(data.row.or_count);
+
+                        if (between(data.transfer_rate.si_rate, 1, 99)){
+                            $('#si_rate').text(`${data.transfer_rate.si_rate.toFixed(2)}%`);
+                        } else {
+                            $('#si_rate').text(`${data.transfer_rate.si_rate}%`);
+                        }
+                        $('#si_rate_progressbar').width(`${data.transfer_rate.si_rate}%`);
+
+                        if (between(data.transfer_rate.dm_rate, 1, 99)){
+                            $('#dm_rate').text(`${data.transfer_rate.dm_rate.toFixed(2)}%`);
+                        } else {
+                            $('#dm_rate').text(`${data.transfer_rate.dm_rate}%`);
+                        }
+                        $('#dm_rate_progressbar').width(`${data.transfer_rate.dm_rate}%`);
+
+                        if (between(data.transfer_rate.cm_rate, 1, 99)){
+                            $('#cm_rate').text(`${data.transfer_rate.cm_rate.toFixed(2)}%`);
+                        } else {
+                            $('#cm_rate').text(`${data.transfer_rate.cm_rate}%`);
+                        }
+                        $('#cm_rate_progressbar').width(`${data.transfer_rate.cm_rate}%`);
+
+                        if(between(data.transfer_rate.sb_rate, 1, 99)){
+                            $('#sb_rate').text(`${data.transfer_rate.sb_rate.toFixed(2)}%`);
+                        } else {
+                            $('#sb_rate').text(`${data.transfer_rate.sb_rate}%`);
+                        }
+                        $('#sb_rate_progressbar').width(`${data.transfer_rate.sb_rate}%`);
+
+                        if(between(data.transfer_rate.or_rate, 1, 99)){
+                            $('#or_rate').text(`${data.transfer_rate.or_rate.toFixed(2)}%`);
+                        } else {
+                            $('#or_rate').text(`${data.transfer_rate.or_rate}%`);
+                        }
+                        $('#or_rate_progressbar').width(`${data.transfer_rate.or_rate}%`);
+
+                        // ["bar","bubble","doughnut","line","polarArea","radar","scatter"]
+                        let chart_type = 'doughnut';
+                        const success_ratio = data.chart.success;
+                        const processing_ratio = data.chart.processing;
+                        const failed_ratio = data.chart.failed;
+                        const ready_to_transmit_ratio = data.chart.ready_to_transmit;
+
+                        let chart_data = [ready_to_transmit_ratio, failed_ratio, processing_ratio, success_ratio];
+                        chart(chart_data, chart_type);
+                    }
+                });
+            }
+            
+            function chart(chart_data, chart_type){
+                Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+                Chart.defaults.global.defaultFontColor = '#858796';
+
+                // Chart Example
+                var ctx = document.getElementById("myPieChart");
+                var myPieChart = new Chart(ctx, {
+                    type: chart_type,
+                    data: {
+                        labels: ["Ready to transmit", "Failed", "Processing", "Success"],
+                        datasets: [{
+                            data: chart_data,
+                            backgroundColor: ['#9295a7', '#e74a3b', '#0056b3', '#4caf50'],
+                            hoverBackgroundColor: ['#858796', '#c52a1b', '#0d4d93', '#149164'],
+                            hoverBorderColor: "rgba(234, 236, 244, 1)",
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        },
+                        legend: {
+                        display: false
+                        },
+                        cutoutPercentage: 80,
+                    },
+                });
+            }
+
+            function between(x, min, max) {
+                return x >= min && x <= max;
+            }
+
+            function search(){
+                var start_date = $('[name="auto_start_date"]').val();
+                var end_date = $('[name="auto_end_date"]').val();
+                fetchData(start_date, end_date);
+                return false;
+            }
+
+            // DASHBOARD auto date range (monthly)
+            var currentDate = new Date();
+            var firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            var lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        
+            // $('[name="auto_start_date"]').datepicker('setDate', firstDayOfMonth);
+            // $('[name="auto_end_date"]').datepicker('setDate', lastDayOfMonth);
+
+            search();
+            
+            $('#search').click(function(){
+                search();
+            });
+
+        });
+        
+     </script>
+     {% include 'dashboard/row-cards.html' %}
+     {% include 'dashboard/charts.html' %}
 {% endblock %}
