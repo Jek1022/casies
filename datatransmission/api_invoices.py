@@ -10,8 +10,6 @@ from threading import Thread
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.Cipher import AES
-from Crypto import Random
-from cryptography.hazmat.primitives import serialization
 from datetime import datetime
 from jose import jws
 from decouple import config
